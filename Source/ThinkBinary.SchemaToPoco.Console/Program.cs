@@ -14,7 +14,6 @@ namespace ThinkBinary.SchemaToPoco.Console
 			try
 			{
 				ConfigureLoging();
-
 				return (int)ExitCodes.Ok;
 			}
 			catch (Exception e)
@@ -28,7 +27,7 @@ namespace ThinkBinary.SchemaToPoco.Console
 		{
 			var coloredConsoleTarget = new ColoredConsoleTarget
 			{
-				Layout = "${longdate} | ${logger} | ${level} | ${message}"
+				Layout = "${date:format=yyyy-MM-dd} ${time:format=hh:mm:ss} [${level}] ${message}"
 			};
 			var loggingRule =  new LoggingRule("*", LogLevel.Debug, coloredConsoleTarget);
 			LogManager.Configuration = new LoggingConfiguration();

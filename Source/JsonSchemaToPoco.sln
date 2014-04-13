@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThinkBinary.SchemaToPoco.Console", "ThinkBinary.SchemaToPoco.Console\ThinkBinary.SchemaToPoco.Console.csproj", "{3AEFFCC7-E21D-4699-B40E-09CB2965F328}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThinkBinary.SchemaToPoco.Core", "ThinkBinary.SchemaToPoco.Core\ThinkBinary.SchemaToPoco.Core.csproj", "{B504BB29-7224-4F82-80ED-BDB344ACABEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThinkBinary.SchemaToPoco.Core.UnitTests", "ThinkBinary.SchemaToPoco.Core.UnitTests\ThinkBinary.SchemaToPoco.Core.UnitTests.csproj", "{CD63E22C-2545-4BAB-BE8A-BD15B59BF8E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{3AEFFCC7-E21D-4699-B40E-09CB2965F328}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AEFFCC7-E21D-4699-B40E-09CB2965F328}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AEFFCC7-E21D-4699-B40E-09CB2965F328}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B504BB29-7224-4F82-80ED-BDB344ACABEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B504BB29-7224-4F82-80ED-BDB344ACABEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B504BB29-7224-4F82-80ED-BDB344ACABEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B504BB29-7224-4F82-80ED-BDB344ACABEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD63E22C-2545-4BAB-BE8A-BD15B59BF8E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD63E22C-2545-4BAB-BE8A-BD15B59BF8E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD63E22C-2545-4BAB-BE8A-BD15B59BF8E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD63E22C-2545-4BAB-BE8A-BD15B59BF8E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

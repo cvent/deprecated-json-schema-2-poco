@@ -9,6 +9,7 @@ namespace ThinkBinary.SchemaToPoco.Core.CodeToLanguage
 	public class CodeCompileUnitToLanguageBase
 	{
 		private readonly CodeCompileUnit _codeCompileUnit;
+		private const string TabCharacter = "\t";
 
 		public CodeCompileUnitToLanguageBase(CodeCompileUnit codeCompileUnit)
 		{
@@ -20,7 +21,7 @@ namespace ThinkBinary.SchemaToPoco.Core.CodeToLanguage
 		{
 			var stringBuilder = new StringBuilder();
 			var stringWriter = new StringWriter(stringBuilder);
-			var writer = new IndentedTextWriter(stringWriter, "\t");
+			var writer = new IndentedTextWriter(stringWriter, TabCharacter);
 			codeProvider.GenerateCodeFromCompileUnit(_codeCompileUnit, writer, new CodeGeneratorOptions
 			{
 				BlankLinesBetweenMembers = true,

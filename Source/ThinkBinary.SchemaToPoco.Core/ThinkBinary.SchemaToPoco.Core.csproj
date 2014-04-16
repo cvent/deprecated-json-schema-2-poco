@@ -45,6 +45,7 @@
     <Compile Include="CodeToLanguage\CodeCompileUnitToCSharp.cs" />
     <Compile Include="CodeToLanguage\CodeCompileUnitToLanguageBase.cs" />
     <Compile Include="CodeToLanguage\CodeCompileUnitToVisualBasic.cs" />
+    <Compile Include="JsonSchemaToCodeUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

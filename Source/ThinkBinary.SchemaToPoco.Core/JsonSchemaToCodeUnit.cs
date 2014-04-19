@@ -19,7 +19,7 @@ namespace ThinkBinary.SchemaToPoco.Core
 		{
 			var codeCompileUnit =  new CodeCompileUnit();
 			codeCompileUnit.Namespaces.Add(new CodeNamespace(_codeNamespace));
-
+			
 			return codeCompileUnit;
 		}
 	}

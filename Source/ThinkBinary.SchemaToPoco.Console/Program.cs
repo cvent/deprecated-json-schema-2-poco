@@ -8,6 +8,8 @@ using NLog.Config;
 using NLog.Targets;
 using ThinkBinary.SchemaToPoco.Core;
 using ThinkBinary.SchemaToPoco.Core.CodeToLanguage;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json;
 
 namespace ThinkBinary.SchemaToPoco.Console
 {
@@ -22,7 +24,6 @@ namespace ThinkBinary.SchemaToPoco.Console
 			{
 				ConfigureLogging();
 				var settings = ConfigureCommandLineOptions(args);
-
 				if (settings.ShowHelp)
 				{
 					var description = new StringBuilder("JSON schema to POCO\nhttps://github.com/codedemonuk/json-schema-to-poco\n\n");
@@ -32,7 +33,7 @@ namespace ThinkBinary.SchemaToPoco.Console
 					return (int)ExitCodes.Ok;
 				}
 
-				var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(settings.Namespace);
+                var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(/*settings.Schema*/"C:\\Users\\SLiu\\Projects\\raml-to-dropwizard-csharp\\schema\\data-set.json", settings.Namespace);
 				var codeUnit = jsonSchemaToCodeUnit.Execute();
 				var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
 				System.Console.WriteLine(csharpGenerator.Execute());

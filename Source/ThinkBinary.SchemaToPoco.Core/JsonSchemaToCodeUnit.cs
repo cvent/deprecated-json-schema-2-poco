@@ -2,7 +2,10 @@
 using Newtonsoft.Json.Schema;
 using System;
 using System.CodeDom;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using ThinkBinary.SchemaToPoco.Util;
 
 namespace ThinkBinary.SchemaToPoco.Core
@@ -11,6 +14,8 @@ namespace ThinkBinary.SchemaToPoco.Core
     {
         private readonly string _codeNamespace;
         private JsonSchema _schemaDocument;
+        private JsonSchemaResolver _resolver = new JsonSchemaResolver();
+        private List<string> _files = new List<string>();
 
         public JsonSchemaToCodeUnit(string schemaDocument, string requestedNamespace)
         {
@@ -65,9 +70,11 @@ namespace ThinkBinary.SchemaToPoco.Core
 
         private JsonSchema LoadSchema(string file)
         {
+            _files.Add(file);
+
             using (TextReader reader = File.OpenText(file))
             {
-                return JsonSchema.Read(new JsonTextReader(reader));
+                return ResolveSchemas(file, reader);
             }
         }
 
@@ -98,6 +105,30 @@ namespace ThinkBinary.SchemaToPoco.Core
                 new CodeFieldReferenceExpression(null, field)));
 
             return property;
+        }
+
+        //
+        private JsonSchema ResolveSchemas(string prevPath, TextReader reader)
+        {
+            string data = reader.ReadToEnd();
+
+            MatchCollection matches = Regex.Matches(data, @"\""\$ref\""\s*:\s*\""(.*.json)\""");
+            foreach(Match match in matches) {
+                string currPath = Path.GetDirectoryName(prevPath) + @"\" + match.Groups[1].Value;
+
+                if(!_files.Contains(currPath)) {
+                    _files.Add(currPath);
+
+                    using (TextReader reader2 = File.OpenText(currPath))
+                    {
+                        ResolveSchemas(currPath, reader2);
+                    }
+                }
+            }
+
+            JsonSchema ret = JsonSchema.Parse(data, _resolver);
+            ret.Id = Path.GetFileName(prevPath);
+            return ret;
         }
     }
 }

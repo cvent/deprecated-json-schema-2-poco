@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using ThinkBinary.SchemaToPoco.Core.Types;
 using ThinkBinary.SchemaToPoco.Util;
 
 namespace ThinkBinary.SchemaToPoco.Core
@@ -62,7 +63,13 @@ namespace ThinkBinary.SchemaToPoco.Core
                 codeClass.Members.Add(field);
 
                 // Add setters/getters
-                codeClass.Members.Add(CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), type));
+                CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), type);
+                PropertyWrapper wrapper = new PropertyWrapper(property);
+
+                // Add comments and annotations
+                wrapper.Populate(i.Value);                
+
+                codeClass.Members.Add(property);
             }
 
             return codeCompileUnit;

@@ -3,13 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using ThinkBinary.SchemaToPoco.Core.ValidationAttributes;
 
 namespace Test
 {
     public class DataSet
     {
 
-        /*public virtual string results
+        public Array _results;
+
+        public Array _dimensions;
+
+        public Object _measure;
+
+        [MinValue(2)]
+        public virtual Array Results
         {
             get
             {
@@ -21,7 +30,7 @@ namespace Test
             }
         }
 
-        public virtual string dimensions
+        public virtual Array Dimensions
         {
             get
             {
@@ -33,7 +42,7 @@ namespace Test
             }
         }
 
-        public virtual string measure
+        public virtual Object Measure
         {
             get
             {
@@ -43,6 +52,6 @@ namespace Test
             {
                 _measure = value;
             }
-        }*/
+        }
     }
 }

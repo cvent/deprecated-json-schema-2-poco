@@ -36,6 +36,7 @@
       <HintPath>..\..\..\..\Downloads\Json60r3\Bin\Net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -50,6 +51,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThinkBinary.SchemaToPoco.Core\ThinkBinary.SchemaToPoco.Core.csproj">
+      <Project>{b504bb29-7224-4f82-80ed-bdb344acabef}</Project>
+      <Name>ThinkBinary.SchemaToPoco.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

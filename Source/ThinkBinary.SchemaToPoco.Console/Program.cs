@@ -12,6 +12,7 @@ using Newtonsoft.Json.Schema;
 using Newtonsoft.Json;
 using System.Web;
 using System.Text.RegularExpressions;
+using ThinkBinary.SchemaToPoco.Core.Types;
 
 namespace ThinkBinary.SchemaToPoco.Console
 {
@@ -21,7 +22,7 @@ namespace ThinkBinary.SchemaToPoco.Console
 		private static OptionSet _options;
         private static string _baseDir;
         private static string _nsDir;
-        private static Dictionary<string, JsonSchema> _schemas = new Dictionary<string, JsonSchema>();
+        private static Dictionary<string, JsonSchemaWrapper> _schemas = new Dictionary<string, JsonSchemaWrapper>();
         private static JsonSchemaResolver _resolver = new JsonSchemaResolver();
 
 		static Int32 Main(string[] args)
@@ -45,14 +46,14 @@ namespace ThinkBinary.SchemaToPoco.Console
                 // Load schemas given a json file or directory
                 LoadSchemas(/*settings.Schema*/"C:\\Users\\SLiu\\Projects\\raml-to-dropwizard-csharp\\schema\\data-set.json");
 
-                foreach(JsonSchema s in _schemas.Values) {
-                    if (s != null)
+                foreach(JsonSchemaWrapper s in _schemas.Values) {
+                    if (s.ToCreate)
                     {
                         var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(s, settings.Namespace);
                         var codeUnit = jsonSchemaToCodeUnit.Execute();
                         var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
 System.Console.WriteLine(csharpGenerator.Execute());
-                        string saveLoc = _baseDir + @"\" + _nsDir + @"\" + s.Title + ".cs";
+                        string saveLoc = _baseDir + @"\" + _nsDir + @"\" + s.Schema.Title + ".cs";
                         GenerateFile(csharpGenerator.Execute(), saveLoc);
                         System.Console.WriteLine("Wrote " + saveLoc);
                     }
@@ -118,14 +119,16 @@ System.Console.WriteLine(csharpGenerator.Execute());
         {
             using (TextReader reader = File.OpenText(file))
             {
-                JsonSchema schema = ResolveSchemas(file, reader);
+                JsonSchemaWrapper schema = ResolveSchemas(file, reader);
                 _schemas.Add(file, schema);
             }
         }
 
-        private static JsonSchema ResolveSchemas(string prevPath, TextReader reader)
+        private static JsonSchemaWrapper ResolveSchemas(string prevPath, TextReader reader)
         {
             string data = reader.ReadToEnd();
+            var definition = new { csharpType = string.Empty, csharpInterfaces = new string[]{} };
+            var deserialized = JsonConvert.DeserializeAnonymousType(data, definition);
 
             MatchCollection matches = Regex.Matches(data, @"\""\$ref\""\s*:\s*\""(.*.json)\""");
             foreach (Match match in matches)
@@ -136,28 +139,34 @@ System.Console.WriteLine(csharpGenerator.Execute());
                 {
                     using (TextReader reader2 = File.OpenText(currPath))
                     {
-                        JsonSchema schema = ResolveSchemas(currPath, reader2);
+                        JsonSchemaWrapper schema = ResolveSchemas(currPath, reader2);
                         _schemas.Add(currPath, schema);
                     }
                 }
             }
 
-            JsonSchema ret = JsonSchema.Parse(data, _resolver);
-            ret.Id = Path.GetFileName(prevPath);
+            JsonSchema parsed = JsonSchema.Parse(data, _resolver);
+            parsed.Id = Path.GetFileName(prevPath);
+            JsonSchemaWrapper toReturn = new JsonSchemaWrapper(parsed);
 
-            // If csharpType is specified, return null
-            Match match2 = Regex.Match(data, @"\""csharpType\""\s*:\s*\""(.*)\""");
-
-            if (match2 != null && match2.Groups[1].Length > 0)
+            // If csharpType is specified
+            if (!String.IsNullOrEmpty(deserialized.csharpType))
             {
-                int lastIndex = match2.Groups[1].Value.LastIndexOf('.');
-                string cType = match2.Groups[1].Value.Substring(lastIndex == -1 ? 0 : lastIndex + 1);
+                int lastIndex = deserialized.csharpType.LastIndexOf('.');
+                string cType = deserialized.csharpType.Substring(lastIndex == -1 ? 0 : lastIndex + 1);
 
-                ret.Title = cType;
-                return null;
+                toReturn.CClass = deserialized.csharpType;
+                toReturn.Schema.Title = cType;
+                toReturn.ToCreate = false;
             }
 
-            return ret;
+            // If csharpInterfaces is specified
+            if(deserialized.csharpInterfaces != null)
+                foreach (string s in deserialized.csharpInterfaces)
+                    if (!String.IsNullOrEmpty(s))
+                        toReturn.Interfaces.Add(s);
+
+            return toReturn;
         }
 	}
 }

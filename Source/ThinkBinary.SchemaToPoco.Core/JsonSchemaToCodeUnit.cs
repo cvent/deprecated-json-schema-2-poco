@@ -15,18 +15,20 @@ namespace ThinkBinary.SchemaToPoco.Core
     public class JsonSchemaToCodeUnit
     {
         private readonly string _codeNamespace;
+        private JsonSchemaWrapper _schemaWrapper;
         private JsonSchema _schemaDocument;
 
-        public JsonSchemaToCodeUnit(JsonSchema schemaDocument, string requestedNamespace)
+        public JsonSchemaToCodeUnit(JsonSchemaWrapper schema, string requestedNamespace)
         {
-            if (schemaDocument == null) throw new ArgumentNullException("schemaDocument");
+            if (schema == null || schema.Schema == null) throw new ArgumentNullException("schemaDocument");
 
-            _schemaDocument = schemaDocument;
+            _schemaWrapper = schema;
+            _schemaDocument = schema.Schema;
             _codeNamespace = requestedNamespace;
         }
 
-        public JsonSchemaToCodeUnit(JsonSchema schemaDocument)
-            : this(schemaDocument, "")
+        public JsonSchemaToCodeUnit(JsonSchemaWrapper schema)
+            : this(schema, "")
         {
         }
 
@@ -48,6 +50,10 @@ namespace ThinkBinary.SchemaToPoco.Core
 
             // Add comments and attributes for class
             clWrap.AddComment(_schemaDocument.Description);
+
+            // Add interfaces
+            foreach (string s in _schemaWrapper.Interfaces)
+                clWrap.AddInterface(s);
 
             // Add properties with getters/setters
             if (_schemaDocument.Properties != null)

@@ -9,49 +9,16 @@ using ThinkBinary.SchemaToPoco.Core.Util;
 
 namespace ThinkBinary.SchemaToPoco.Core.Types
 {
-    class PropertyWrapper : BaseWrapper
+    // Represents a property (the ones with getters and setters)
+    class PropertyWrapper : BaseWrapper<CodeMemberProperty>
     {
-        private CodeMemberProperty _property;
-
-        public PropertyWrapper(CodeMemberProperty p)
+        public PropertyWrapper(CodeMemberProperty p) : base(p)
         {
-            _property = p;
-        }
-
-        // Add comment to property
-        public void AddComment(string s)
-        {
-            _property.Comments.Add(new CodeCommentStatement(s));
-        }
-
-        // Add attribute to property
-        public void AddAttribute(string name)
-        {
-            _property.CustomAttributes.Add(new CodeAttributeDeclaration(name));
-        }
-
-        // Add attribute to property
-        public void AddAttribute(string name, Object arg)
-        {
-            _property.CustomAttributes.Add(new CodeAttributeDeclaration(name, new CodeAttributeArgument(new CodePrimitiveExpression(arg))));
-        }
-
-        // Add attribute to property
-        public void AddAttribute(string name, CodeAttributeArgument args)
-        {
-            _property.CustomAttributes.Add(new CodeAttributeDeclaration(name, args));
-        }
-
-        // Add attribute to property
-        public void AddAttribute(string name, CodeAttributeArgument[] args)
-        {
-            _property.CustomAttributes.Add(new CodeAttributeDeclaration(name, args));
         }
 
         // Add all comments and attributes
         public void Populate(JsonSchema schema)
         {
-//System.Console.WriteLine("schema type: " + schema.Type.Value.ToString());
             if (schema.Description != null)
                 AddComment(schema.Description);
 
@@ -91,14 +58,22 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
             if (JsonSchemaUtils.isString(schema))
             {
                 List<CodeAttributeArgument> args = new List<CodeAttributeArgument>();
+                bool flag = false;
 
                 if (schema.MaximumLength != null)
+                {
                     args.Add(new CodeAttributeArgument(new CodePrimitiveExpression(schema.MaximumLength.Value)));
+                    flag = true;
+                }
 
                 if (schema.MinimumLength != null)
+                {
                     args.Add(new CodeAttributeArgument("MinimumLength", new CodePrimitiveExpression(schema.MinimumLength.Value)));
+                    flag = true;
+                }
                 
-                AddAttribute("StringLength", args.ToArray());
+                if(flag)
+                    AddAttribute("StringLength", args.ToArray());
             }
 
             // Array only flags

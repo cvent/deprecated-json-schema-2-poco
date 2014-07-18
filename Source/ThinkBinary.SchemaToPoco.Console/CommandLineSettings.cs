@@ -1,4 +1,5 @@
-﻿namespace ThinkBinary.SchemaToPoco.Console
+﻿using System.IO;
+namespace ThinkBinary.SchemaToPoco.Console
 {
 	internal class CommandLineSettings
 	{
@@ -6,7 +7,7 @@
 		{
 			// Meaningful defaults
 			Namespace = "generated";
-			OutputFilename = "output.cs";
+			OutputFiledir = Directory.GetCurrentDirectory();
 			RootClass = "RootClass";
 			ShowHelp = false;
 		}
@@ -14,7 +15,7 @@
 		public string Namespace { get; set; }
 		public string RootClass { get; set; }
 		public string Schema { get; set; }
-		public string OutputFilename { get; set; }
+		public string OutputFiledir { get; set; }
 
 		public bool ShowHelp { get; set; }
 	}

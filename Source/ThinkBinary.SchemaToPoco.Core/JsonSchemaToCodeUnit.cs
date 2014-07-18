@@ -16,19 +16,16 @@ namespace ThinkBinary.SchemaToPoco.Core
     {
         private readonly string _codeNamespace;
         private JsonSchema _schemaDocument;
-        private JsonSchemaResolver _resolver = new JsonSchemaResolver();
-        //private List<string> _files = new List<string>();
-        private Dictionary<string, JsonSchema> _schemas = new Dictionary<string, JsonSchema>();
 
-        public JsonSchemaToCodeUnit(string schemaDocument, string requestedNamespace)
+        public JsonSchemaToCodeUnit(JsonSchema schemaDocument, string requestedNamespace)
         {
             if (schemaDocument == null) throw new ArgumentNullException("schemaDocument");
 
-            _schemaDocument = LoadSchema(schemaDocument);
+            _schemaDocument = schemaDocument;
             _codeNamespace = requestedNamespace;
         }
 
-        public JsonSchemaToCodeUnit(string schemaDocument)
+        public JsonSchemaToCodeUnit(JsonSchema schemaDocument)
             : this(schemaDocument, "")
         {
         }
@@ -41,62 +38,53 @@ namespace ThinkBinary.SchemaToPoco.Core
             var codeCompileUnit = new CodeCompileUnit();
 
             // Set namespace
-            CodeNamespace ns = new CodeNamespace(_codeNamespace);
-
-            // Add imports
-            //ns.Imports.Add(new CodeNamespaceImport("System"));
+            NamespaceWrapper nsWrap = new NamespaceWrapper(new CodeNamespace(_codeNamespace));
 
             // Set class
             CodeTypeDeclaration codeClass = new CodeTypeDeclaration(_schemaDocument.Title);
             codeClass.IsClass = true;
             codeClass.Attributes = MemberAttributes.Public;
+            ClassWrapper clWrap = new ClassWrapper(codeClass);
 
             // Add comments and attributes for class
-            codeClass.Comments.Add(new CodeCommentStatement(_schemaDocument.Description));
+            clWrap.AddComment(_schemaDocument.Description);
 
             // Add properties with getters/setters
-            foreach (var i in _schemaDocument.Properties)
+            if (_schemaDocument.Properties != null)
             {
-                string type = JsonSchemaUtils.getTypeString(i.Value);
-
-                CodeMemberField field = new CodeMemberField
+                foreach (var i in _schemaDocument.Properties)
                 {
-                    Attributes = MemberAttributes.Public,
-                    Name = "_" + i.Key.ToString(),
-                    Type = new CodeTypeReference(type)
-                };
+                    string type = JsonSchemaUtils.getTypeString(i.Value);
 
-                codeClass.Members.Add(field);
+                    CodeMemberField field = new CodeMemberField
+                    {
+                        Attributes = MemberAttributes.Public,
+                        Name = "_" + i.Key.ToString(),
+                        Type = new CodeTypeReference(type)
+                    };
 
-                // Add setters/getters
-                CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), type);
-                PropertyWrapper wrapper = new PropertyWrapper(property);
+                    // Add comment if not null
+                    if(i.Value.Description != null)
+                        field.Comments.Add(new CodeCommentStatement(i.Value.Description));
+                    
+                    clWrap.Property.Members.Add(field);
 
-                // Add comments and attributes
-                wrapper.Populate(i.Value);                
+                    // Add setters/getters
+                    CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), type);
+                    PropertyWrapper prWrap = new PropertyWrapper(property);
 
-                codeClass.Members.Add(property);
+                    // Add comments and attributes
+                    prWrap.Populate(i.Value);
+
+                    clWrap.Property.Members.Add(property);
+                }
             }
 
             // Add class to namespace
-            ns.Types.Add(codeClass);
-            codeCompileUnit.Namespaces.Add(ns);
+            nsWrap.AddClass(clWrap.Property);
+            codeCompileUnit.Namespaces.Add(nsWrap.Namespace);
 
             return codeCompileUnit;
-        }
-
-        private JsonSchema LoadSchema(string file)
-        {
-            //_files.Add(file);
-
-            using (TextReader reader = File.OpenText(file))
-            {
-                JsonSchema schema = ResolveSchemas(file, reader);
-                _schemas.Add(file, schema);
-                return schema;
-                //string data = reader.ReadToEnd();
-                //return JsonSchema.Parse(data);
-            }
         }
 
         /// <summary>
@@ -126,32 +114,6 @@ namespace ThinkBinary.SchemaToPoco.Core
                 new CodeFieldReferenceExpression(null, field)));
 
             return property;
-        }
-
-        //
-        private JsonSchema ResolveSchemas(string prevPath, TextReader reader)
-        {
-            string data = reader.ReadToEnd();
-
-            MatchCollection matches = Regex.Matches(data, @"\""\$ref\""\s*:\s*\""(.*.json)\""");
-            foreach(Match match in matches) {
-                string currPath = Path.GetDirectoryName(prevPath) + @"\" + match.Groups[1].Value;
-
-                //if(!_files.Contains(currPath)) {
-                if(!_schemas.ContainsKey(currPath)) {
-                    //_files.Add(currPath);
-
-                    using (TextReader reader2 = File.OpenText(currPath))
-                    {
-                        JsonSchema schema = ResolveSchemas(currPath, reader2);
-                        _schemas.Add(currPath, schema);
-                    }
-                }
-            }
-
-            JsonSchema ret = JsonSchema.Parse(data, _resolver);
-            ret.Id = Path.GetFileName(prevPath);
-            return ret;
         }
     }
 }

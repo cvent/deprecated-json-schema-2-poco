@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using ThinkBinary.SchemaToPoco.Core.ValidationAttributes;
 
 namespace Test
 {
@@ -17,7 +11,6 @@ namespace Test
 
         public Object _measure;
 
-        [MinValue(2)]
         public virtual Array Results
         {
             get

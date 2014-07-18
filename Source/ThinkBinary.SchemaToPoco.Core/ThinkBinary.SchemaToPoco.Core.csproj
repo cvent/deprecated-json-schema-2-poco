@@ -50,6 +50,8 @@
     <Compile Include="JsonSchemaToCodeUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\BaseWrapper.cs" />
+    <Compile Include="Types\ClassWrapper.cs" />
+    <Compile Include="Types\NamespaceWrapper.cs" />
     <Compile Include="Types\PropertyWrapper.cs" />
     <Compile Include="Util\JsonSchemaUtils.cs" />
     <Compile Include="Util\StringUtils.cs" />

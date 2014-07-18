@@ -11,17 +11,17 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
     {
         public static bool isInteger(JsonSchema schema)
         {
-            return schema.Type.Value.ToString().Equals("Integer");
+            return schema.Type != null && schema.Type.Value.ToString().Equals("Integer");
         }
 
         public static bool isString(JsonSchema schema)
         {
-            return schema.Type.Value.ToString().Equals("String");
+            return schema.Type != null && schema.Type.Value.ToString().Equals("String");
         }
 
         public static bool isArray(JsonSchema schema)
         {
-            return schema.Type.Value.ToString().Equals("Array");
+            return schema.Type != null && schema.Type.Value.ToString().Equals("Array");
         }
 
         public static string getTypeString(JsonSchema schema)

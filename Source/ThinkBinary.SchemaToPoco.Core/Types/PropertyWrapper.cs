@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThinkBinary.SchemaToPoco.Core.Util;
 
 namespace ThinkBinary.SchemaToPoco.Core.Types
 {
-    class PropertyWrapper
+    class PropertyWrapper : BaseWrapper
     {
         private CodeMemberProperty _property;
 
@@ -50,7 +51,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
         // Add all comments and attributes
         public void Populate(JsonSchema schema)
         {
-System.Console.WriteLine("schema type: " + schema.Type.Value.ToString());
+//System.Console.WriteLine("schema type: " + schema.Type.Value.ToString());
             if (schema.Description != null)
                 AddComment(schema.Description);
 
@@ -58,7 +59,7 @@ System.Console.WriteLine("schema type: " + schema.Type.Value.ToString());
                 AddAttribute("Required");
 
             // Integer only flags
-            if (schema.Type.Value.ToString().Equals("Integer"))
+            if (JsonSchemaUtils.isInteger(schema))
             {
                 if (schema.Minimum != null)
                 {
@@ -87,7 +88,7 @@ System.Console.WriteLine("schema type: " + schema.Type.Value.ToString());
             }
 
             // String only flags
-            if (schema.Type.Value.ToString().Equals("String"))
+            if (JsonSchemaUtils.isString(schema))
             {
                 List<CodeAttributeArgument> args = new List<CodeAttributeArgument>();
 
@@ -101,7 +102,7 @@ System.Console.WriteLine("schema type: " + schema.Type.Value.ToString());
             }
 
             // Array only flags
-            if (schema.Type.Value.ToString().Equals("Array"))
+            if (JsonSchemaUtils.isArray(schema))
             {
                 //if(schema.MinimumItems != null)
 

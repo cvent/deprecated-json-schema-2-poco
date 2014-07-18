@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Mono.Options;
+using NDesk.Options;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -10,6 +10,7 @@ using ThinkBinary.SchemaToPoco.Core;
 using ThinkBinary.SchemaToPoco.Core.CodeToLanguage;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json;
+using System.Web;
 
 namespace ThinkBinary.SchemaToPoco.Console
 {
@@ -17,6 +18,7 @@ namespace ThinkBinary.SchemaToPoco.Console
 	{
 		private static Logger _log;
 		private static OptionSet _options;
+        private static string _baseDir;
 
 		static Int32 Main(string[] args)
 		{
@@ -24,6 +26,9 @@ namespace ThinkBinary.SchemaToPoco.Console
 			{
 				ConfigureLogging();
 				var settings = ConfigureCommandLineOptions(args);
+
+                CreateDirectories(settings.Namespace);
+
 				if (settings.ShowHelp)
 				{
 					var description = new StringBuilder("JSON schema to POCO\nhttps://github.com/codedemonuk/json-schema-to-poco\n\n");
@@ -37,6 +42,8 @@ namespace ThinkBinary.SchemaToPoco.Console
 				var codeUnit = jsonSchemaToCodeUnit.Execute();
 				var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
 				System.Console.WriteLine(csharpGenerator.Execute());
+                //GenerateFile(csharpGenerator.Execute(), _baseDir + "DataSetGen.cs");
+                //System.Console.WriteLine("Wrote file(s) to disk.");
 
 				return (int)ExitCodes.Ok;
 			}
@@ -62,16 +69,16 @@ namespace ThinkBinary.SchemaToPoco.Console
 			_log = LogManager.GetCurrentClassLogger();
 		}
 
-		private static CommandLineSettings ConfigureCommandLineOptions(IEnumerable<string> arguements)
+		private static CommandLineSettings ConfigureCommandLineOptions(string[] arguements)
 		{
 			var settings = new CommandLineSettings();
 
 			_options = new OptionSet
 			{
-				{"n|namespace","Namespace contaning all of the generated classes", ns => settings.Namespace = ns},
-				{"r|rootclass", "Name of the root class in the schema",rc => settings.RootClass = rc},
-				{"s|schema", "File path to the schema file", s => settings.Schema = s},
-				{"o|output", "Generated output file", fn => settings.OutputFilename = fn},
+				{"n=|namespace=","Namespace contaning all of the generated classes", ns => settings.Namespace = ns},
+				{"r=|rootclass=", "Name of the root class in the schema",rc => settings.RootClass = rc},
+				{"s=|schema=", "File path to the schema file", s => settings.Schema = s},
+				{"o=|output=", "Directory to save files", fn => settings.OutputFilename = fn},
 				{"?|help","Show this help message", h => settings.ShowHelp = !string.IsNullOrWhiteSpace(h)}
 			};
 
@@ -79,5 +86,18 @@ namespace ThinkBinary.SchemaToPoco.Console
 
 			return settings;
 		}
+
+        private static void GenerateFile(string data, string path)
+        {
+            StreamWriter sw = new StreamWriter(File.Open(path, FileMode.Create));
+            sw.Write(data);
+            sw.Close();
+        }
+
+        private static void CreateDirectories(string ns)
+        {
+            _baseDir = ns.Replace('.', '\\');
+            Directory.CreateDirectory(_baseDir);
+        }
 	}
 }

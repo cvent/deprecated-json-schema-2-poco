@@ -49,9 +49,10 @@
     <Compile Include="CodeToLanguage\CodeCompileUnitToVisualBasic.cs" />
     <Compile Include="JsonSchemaToCodeUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Types\BaseWrapper.cs" />
     <Compile Include="Types\PropertyWrapper.cs" />
+    <Compile Include="Util\JsonSchemaUtils.cs" />
     <Compile Include="Util\StringUtils.cs" />
-    <Compile Include="ValidationAttributes\DistinctArrayAttribute.cs" />
     <Compile Include="ValidationAttributes\MaxValueAttribute.cs" />
     <Compile Include="ValidationAttributes\MinValueAttribute.cs" />
   </ItemGroup>

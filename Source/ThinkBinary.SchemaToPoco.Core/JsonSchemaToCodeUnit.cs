@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using ThinkBinary.SchemaToPoco.Core.Types;
+using ThinkBinary.SchemaToPoco.Core.Util;
 using ThinkBinary.SchemaToPoco.Util;
 
 namespace ThinkBinary.SchemaToPoco.Core
@@ -16,7 +17,8 @@ namespace ThinkBinary.SchemaToPoco.Core
         private readonly string _codeNamespace;
         private JsonSchema _schemaDocument;
         private JsonSchemaResolver _resolver = new JsonSchemaResolver();
-        private List<string> _files = new List<string>();
+        //private List<string> _files = new List<string>();
+        private Dictionary<string, JsonSchema> _schemas = new Dictionary<string, JsonSchema>();
 
         public JsonSchemaToCodeUnit(string schemaDocument, string requestedNamespace)
         {
@@ -40,18 +42,22 @@ namespace ThinkBinary.SchemaToPoco.Core
 
             // Set namespace
             CodeNamespace ns = new CodeNamespace(_codeNamespace);
-            codeCompileUnit.Namespaces.Add(ns);
+
+            // Add imports
+            //ns.Imports.Add(new CodeNamespaceImport("System"));
 
             // Set class
             CodeTypeDeclaration codeClass = new CodeTypeDeclaration(_schemaDocument.Title);
             codeClass.IsClass = true;
             codeClass.Attributes = MemberAttributes.Public;
-            ns.Types.Add(codeClass);
+
+            // Add comments and attributes for class
+            codeClass.Comments.Add(new CodeCommentStatement(_schemaDocument.Description));
 
             // Add properties with getters/setters
             foreach (var i in _schemaDocument.Properties)
             {
-                var type = i.Value.Type.ToString();
+                string type = JsonSchemaUtils.getTypeString(i.Value);
 
                 CodeMemberField field = new CodeMemberField
                 {
@@ -66,22 +72,30 @@ namespace ThinkBinary.SchemaToPoco.Core
                 CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), type);
                 PropertyWrapper wrapper = new PropertyWrapper(property);
 
-                // Add comments and annotations
+                // Add comments and attributes
                 wrapper.Populate(i.Value);                
 
                 codeClass.Members.Add(property);
             }
+
+            // Add class to namespace
+            ns.Types.Add(codeClass);
+            codeCompileUnit.Namespaces.Add(ns);
 
             return codeCompileUnit;
         }
 
         private JsonSchema LoadSchema(string file)
         {
-            _files.Add(file);
+            //_files.Add(file);
 
             using (TextReader reader = File.OpenText(file))
             {
-                return ResolveSchemas(file, reader);
+                JsonSchema schema = ResolveSchemas(file, reader);
+                _schemas.Add(file, schema);
+                return schema;
+                //string data = reader.ReadToEnd();
+                //return JsonSchema.Parse(data);
             }
         }
 
@@ -123,12 +137,14 @@ namespace ThinkBinary.SchemaToPoco.Core
             foreach(Match match in matches) {
                 string currPath = Path.GetDirectoryName(prevPath) + @"\" + match.Groups[1].Value;
 
-                if(!_files.Contains(currPath)) {
-                    _files.Add(currPath);
+                //if(!_files.Contains(currPath)) {
+                if(!_schemas.ContainsKey(currPath)) {
+                    //_files.Add(currPath);
 
                     using (TextReader reader2 = File.OpenText(currPath))
                     {
-                        ResolveSchemas(currPath, reader2);
+                        JsonSchema schema = ResolveSchemas(currPath, reader2);
+                        _schemas.Add(currPath, schema);
                     }
                 }
             }

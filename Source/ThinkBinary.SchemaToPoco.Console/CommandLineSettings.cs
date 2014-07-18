@@ -5,7 +5,7 @@
 		public CommandLineSettings()
 		{
 			// Meaningful defaults
-			Namespace = "";
+			Namespace = "generated";
 			OutputFilename = "output.cs";
 			RootClass = "RootClass";
 			ShowHelp = false;

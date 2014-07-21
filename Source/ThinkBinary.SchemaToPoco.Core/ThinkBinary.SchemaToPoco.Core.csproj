@@ -51,6 +51,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\BaseWrapper.cs" />
     <Compile Include="Types\ClassWrapper.cs" />
+    <Compile Include="Types\EnumWrapper.cs" />
     <Compile Include="Types\JsonSchemaWrapper.cs" />
     <Compile Include="Types\NamespaceWrapper.cs" />
     <Compile Include="Types\PropertyWrapper.cs" />

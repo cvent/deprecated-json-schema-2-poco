@@ -78,7 +78,7 @@ namespace ThinkBinary.SchemaToPoco.Console
                         var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(s, settings.Namespace);
                         var codeUnit = jsonSchemaToCodeUnit.Execute();
                         var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
-//System.Console.WriteLine(csharpGenerator.Execute());
+System.Console.WriteLine(csharpGenerator.Execute());
                         string saveLoc = _baseDir + @"\" + _nsDir + @"\" + s.Schema.Title + ".cs";
                         GenerateFile(csharpGenerator.Execute(), saveLoc);
                         System.Console.WriteLine("Wrote " + saveLoc);

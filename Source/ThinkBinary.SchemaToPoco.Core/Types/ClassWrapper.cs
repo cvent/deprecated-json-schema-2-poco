@@ -15,6 +15,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
         public ClassWrapper(CodeTypeDeclaration cl)
             : base(cl)
         {
+            Property.IsClass = true;
         }
 
         public void AddInterface(string name)

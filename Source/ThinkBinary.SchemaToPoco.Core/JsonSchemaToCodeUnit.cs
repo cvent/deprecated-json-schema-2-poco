@@ -59,7 +59,6 @@ namespace ThinkBinary.SchemaToPoco.Core
 
             // Set class
             CodeTypeDeclaration codeClass = new CodeTypeDeclaration(_schemaDocument.Title);
-            codeClass.IsClass = true;
             codeClass.Attributes = MemberAttributes.Public;
             ClassWrapper clWrap = new ClassWrapper(codeClass);
 
@@ -75,29 +74,49 @@ namespace ThinkBinary.SchemaToPoco.Core
             {
                 foreach (var i in _schemaDocument.Properties)
                 {
-                    string type = JsonSchemaUtils.getTypeString(i.Value);
-
-                    CodeMemberField field = new CodeMemberField
+                    // If it is an enum
+                    if (i.Value.Enum != null)
                     {
-                        Attributes = MemberAttributes.Public,
-                        Name = "_" + i.Key.ToString(),
-                        Type = new CodeTypeReference(type)
-                    };
+                        string name = StringUtils.Capitalize(i.Key.ToString());
+                        CodeTypeDeclaration enumField = new CodeTypeDeclaration(name);
+                        EnumWrapper enumWrap = new EnumWrapper(enumField);
 
-                    // Add comment if not null
-                    if(i.Value.Description != null)
-                        field.Comments.Add(new CodeCommentStatement(i.Value.Description));
-                    
-                    clWrap.Property.Members.Add(field);
+                        // Add comment if not null
+                        if (i.Value.Description != null)
+                            enumField.Comments.Add(new CodeCommentStatement(i.Value.Description));
 
-                    // Add setters/getters
-                    CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), type);
-                    PropertyWrapper prWrap = new PropertyWrapper(property);
+                        foreach(var j in i.Value.Enum)
+                            enumWrap.AddMember(StringUtils.Sanitize(j.ToString()));
 
-                    // Add comments and attributes
-                    prWrap.Populate(i.Value);
+                        // Add to namespace
+                        nsWrap.AddClass(enumWrap.Property);
+                    }
+                    else
+                    {
+                        string type = JsonSchemaUtils.getTypeString(i.Value);
 
-                    clWrap.Property.Members.Add(property);
+                        CodeMemberField field = new CodeMemberField
+                        {
+                            Attributes = MemberAttributes.Public,
+                            Name = "_" + i.Key.ToString(),
+                            Type = new CodeTypeReference(type)
+                        };
+
+                        // Add comment if not null
+                        if (i.Value.Description != null)
+                            field.Comments.Add(new CodeCommentStatement(i.Value.Description));
+
+                        clWrap.Property.Members.Add(field);
+
+                        // Add setters/getters
+                        CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), type);
+                        PropertyWrapper prWrap = new PropertyWrapper(property);
+
+                        // Add comments and attributes
+                        prWrap.Populate(i.Value);
+
+                        clWrap.Property.Members.Add(property);
+                    }
                 }
             }
 

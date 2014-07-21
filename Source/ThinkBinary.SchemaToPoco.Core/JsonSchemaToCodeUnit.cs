@@ -96,6 +96,7 @@ namespace ThinkBinary.SchemaToPoco.Core
                     {
                         Type type = JsonSchemaUtils.GetType(i.Value, _codeNamespace);
                         string cleanType = type.Name;
+                        bool isCustomType = type.Namespace.Equals(_codeNamespace);
 
                         // Add imports
                         nsWrap.AddImport(type.Namespace);
@@ -110,7 +111,7 @@ namespace ThinkBinary.SchemaToPoco.Core
                         {
                             Attributes = MemberAttributes.Public,
                             Name = "_" + i.Key.ToString(),
-                            Type = new CodeTypeReference(cleanType)
+                            Type = isCustomType ? new CodeTypeReference(cleanType) : new CodeTypeReference(type)
                         };
 
                         // Add comment if not null
@@ -120,7 +121,7 @@ namespace ThinkBinary.SchemaToPoco.Core
                         clWrap.Property.Members.Add(field);
 
                         // Add setters/getters
-                        CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), cleanType);
+                        CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), field.Type.BaseType);
                         PropertyWrapper prWrap = new PropertyWrapper(property);
 
                         // Add comments and attributes

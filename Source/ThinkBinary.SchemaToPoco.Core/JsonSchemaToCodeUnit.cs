@@ -94,7 +94,7 @@ namespace ThinkBinary.SchemaToPoco.Core
                     }
                     else
                     {
-                        string type = JsonSchemaUtils.GetTypeString(i.Value);
+                        var type = JsonSchemaUtils.GetType(i.Value);
 
                         CodeMemberField field = new CodeMemberField
                         {
@@ -110,7 +110,7 @@ namespace ThinkBinary.SchemaToPoco.Core
                         clWrap.Property.Members.Add(field);
 
                         // Add setters/getters
-                        CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), type);
+                        CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), type.ToString());
                         PropertyWrapper prWrap = new PropertyWrapper(property);
 
                         // Add comments and attributes

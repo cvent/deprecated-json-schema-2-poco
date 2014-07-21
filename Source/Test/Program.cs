@@ -13,7 +13,7 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            string schemaJson;
+            /*string schemaJson;
 
             schemaJson = @"{
   'id': 'person',
@@ -26,7 +26,9 @@ namespace Test
             var definition = new { id = "" };
             var personSchema = JsonConvert.DeserializeAnonymousType(schemaJson, definition);
             Console.WriteLine(personSchema.id);
-            // true
+            // true*/
+            Type t = Type.GetType("float", true);
+            Console.WriteLine(t.IsClass);
         }
     }
 }

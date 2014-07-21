@@ -30,8 +30,8 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
             if (schema.Required != null && schema.Required.Value)
                 AddAttribute("Required");
 
-            // Integer only flags
-            if (JsonSchemaUtils.IsInteger(schema))
+            // Number only flags
+            if (JsonSchemaUtils.IsNumber(schema))
             {
                 if (schema.Minimum != null)
                 {
@@ -55,7 +55,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
                             AddAttribute("MaxValue", schema.Maximum.Value);
                     }
                     else
-                        AddAttribute("MinValue", schema.Maximum.Value);
+                        AddAttribute("MaxValue", schema.Maximum.Value);
                 }
             }
 

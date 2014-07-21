@@ -2,7 +2,7 @@
 Converts JSON schema files into plain old CLR objects in C#.
 
 # Usage
-`\Source\ -s \Location\To\Json\Schema`
+`\Source\ThinkBinary.SchemaToPoco.Console\bin\Debug\ThinkBinary.SchemaToPoco.Console.exe -s \Location\To\Json\Schema`
 
 Optional flags:
 

@@ -58,7 +58,7 @@ namespace ThinkBinary.SchemaToPoco.Core
             NamespaceWrapper nsWrap = new NamespaceWrapper(new CodeNamespace(_codeNamespace));
 
             // Set class
-            CodeTypeDeclaration codeClass = new CodeTypeDeclaration(_schemaDocument.Title ?? "DefaultClassName");
+            CodeTypeDeclaration codeClass = new CodeTypeDeclaration(_schemaDocument.Title);
             codeClass.Attributes = MemberAttributes.Public;
             ClassWrapper clWrap = new ClassWrapper(codeClass);
 
@@ -94,7 +94,7 @@ namespace ThinkBinary.SchemaToPoco.Core
                     }
                     else
                     {
-                        string type = JsonSchemaUtils.getTypeString(i.Value);
+                        string type = JsonSchemaUtils.GetTypeString(i.Value);
 
                         CodeMemberField field = new CodeMemberField
                         {

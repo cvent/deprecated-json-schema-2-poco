@@ -124,7 +124,6 @@ System.Console.WriteLine(csharpGenerator.Execute());
 			_options = new OptionSet
 			{
 				{"n=|namespace=","Namespace contaning all of the generated classes", ns => settings.Namespace = ns},
-				{"r=|rootclass=", "Name of the root class in the schema",rc => settings.RootClass = rc},
 				{"s=|schema=", "File path to the schema file", s => settings.Schema = s},
 				{"o=|output=", "Directory to save files", fn => settings.OutputFiledir = fn},
 				{"?|help","Show this help message", h => settings.ShowHelp = !string.IsNullOrWhiteSpace(h)}

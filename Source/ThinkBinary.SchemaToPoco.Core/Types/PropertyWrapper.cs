@@ -31,7 +31,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
                 AddAttribute("Required");
 
             // Integer only flags
-            if (JsonSchemaUtils.isInteger(schema))
+            if (JsonSchemaUtils.IsInteger(schema))
             {
                 if (schema.Minimum != null)
                 {
@@ -60,7 +60,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
             }
 
             // String only flags
-            if (JsonSchemaUtils.isString(schema))
+            if (JsonSchemaUtils.IsString(schema))
             {
                 List<CodeAttributeArgument> args = new List<CodeAttributeArgument>();
                 bool flag = false;
@@ -82,7 +82,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
             }
 
             // Array only flags
-            if (JsonSchemaUtils.isArray(schema))
+            if (JsonSchemaUtils.IsArray(schema))
             {
                 //if(schema.MinimumItems != null)
 

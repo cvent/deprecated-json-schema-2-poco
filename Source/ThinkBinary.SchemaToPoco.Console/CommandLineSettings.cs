@@ -11,7 +11,6 @@ namespace ThinkBinary.SchemaToPoco.Console
 			// Meaningful defaults
 			Namespace = "generated";
 			OutputFiledir = Directory.GetCurrentDirectory();
-			RootClass = "RootClass";
 			ShowHelp = false;
 		}
 
@@ -19,11 +18,6 @@ namespace ThinkBinary.SchemaToPoco.Console
         /// Namespace for all of the generated schemas.
         /// </summary>
 		public string Namespace { get; set; }
-
-        /// <summary>
-        /// The root class name. Not used.
-        /// </summary>
-		public string RootClass { get; set; }
 
         /// <summary>
         /// The schema file path.

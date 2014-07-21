@@ -13,6 +13,11 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
     public class JsonSchemaWrapper
     {
         /// <summary>
+        /// Set defaults for required fields.
+        /// </summary>
+        public const string DefaultClassName = "DefaultClassName";
+
+        /// <summary>
         /// The JsonSchema.
         /// </summary>
         public JsonSchema Schema { get; set; }
@@ -39,6 +44,8 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
             // Initialize defaults
             ToCreate = true;
             Interfaces = new List<string>();
+
+            Schema.Title = Schema.Title ?? DefaultClassName;
         }
     }
 }

@@ -10,14 +10,19 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
     /// <summary>
     /// Common utilities for a JsonSchema.
     /// </summary>
-    class JsonSchemaUtils
+    public class JsonSchemaUtils
     {
+        /// <summary>
+        /// Default type to set to if not specified elsewhere.
+        /// </summary>
+        private const string DefaultType = "Object";
+
         /// <summary>
         /// Check if the schema is an integer type.
         /// </summary>
         /// <param name="schema">The JSON shema.</param>
         /// <returns>True if it is an integer.</returns>
-        public static bool isInteger(JsonSchema schema)
+        public static bool IsInteger(JsonSchema schema)
         {
             return schema.Type != null && schema.Type.Value.ToString().Equals("Integer");
         }
@@ -27,7 +32,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         /// </summary>
         /// <param name="schema">The JSON shema.</param>
         /// <returns>True if it is an string.</returns>
-        public static bool isString(JsonSchema schema)
+        public static bool IsString(JsonSchema schema)
         {
             return schema.Type != null && schema.Type.Value.ToString().Equals("String");
         }
@@ -37,7 +42,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         /// </summary>
         /// <param name="schema">The JSON shema.</param>
         /// <returns>True if it is an array.</returns>
-        public static bool isArray(JsonSchema schema)
+        public static bool IsArray(JsonSchema schema)
         {
             return schema.Type != null && schema.Type.Value.ToString().Equals("Array");
         }
@@ -47,29 +52,41 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         /// </summary>
         /// <param name="schema">The JSON schema.</param>
         /// <returns>The type of the schema as a string.</returns>
-        public static string getTypeString(JsonSchema schema)
+        public static string GetTypeString(JsonSchema schema)
         {
-            // Set the type to the type if it is not an array
-            if (!JsonSchemaUtils.isArray(schema)) {
-                if (schema.Title != null)
-                    return schema.Title;
-                if (schema.Type != null)
-                    return schema.Type.ToString();
-            }
+            string toRet = DefaultType;
 
-            if (JsonSchemaUtils.isArray(schema)) {
-                var listWrap = schema.UniqueItems ? "HashSet<" : "List<";
+            // Set the type to the type if it is not an array
+            if (!IsArray(schema)) {
+                if (schema.Title != null)
+                    toRet = schema.Title;
+                else if (schema.Type != null)
+                    toRet = schema.Type.ToString();
+            }
+            else {
+                toRet = schema.UniqueItems ? "HashSet<" : "List<";
 
                 // Set the type to the title if it exists
-                if(schema.Title != null)
-                    return listWrap + schema.Title + ">";
+                if (schema.Title != null)
+                    toRet += schema.Title;
+                else if (schema.Items.Count > 0)
+                {
+                    // Set the type to the title of the items
+                    if (schema.Items[0].Title != null)
+                        toRet += schema.Items[0].Title;
+                    // Set the type to the type of the items
+                    else if (schema.Items[0].Type != null)
+                        toRet += schema.Items[0].Type;
+                    else
+                        toRet += DefaultType;
+                }
+                else
+                    toRet += DefaultType;
 
-                if(schema.Items.Count > 0 && schema.Items[0].Title != null)
-                    return listWrap + schema.Items[0].Title + ">";
+                toRet += ">";
             }
 
-            // Default type
-            return "object";
+            return toRet;
         }
     }
 }

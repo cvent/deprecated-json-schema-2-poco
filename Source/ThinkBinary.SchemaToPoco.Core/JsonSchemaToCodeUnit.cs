@@ -58,12 +58,13 @@ namespace ThinkBinary.SchemaToPoco.Core
             NamespaceWrapper nsWrap = new NamespaceWrapper(new CodeNamespace(_codeNamespace));
 
             // Set class
-            CodeTypeDeclaration codeClass = new CodeTypeDeclaration(_schemaDocument.Title);
+            CodeTypeDeclaration codeClass = new CodeTypeDeclaration(_schemaDocument.Title ?? "DefaultClassName");
             codeClass.Attributes = MemberAttributes.Public;
             ClassWrapper clWrap = new ClassWrapper(codeClass);
 
             // Add comments and attributes for class
-            clWrap.AddComment(_schemaDocument.Description);
+            if(!String.IsNullOrEmpty(_schemaDocument.Description))
+                clWrap.AddComment(_schemaDocument.Description);
 
             // Add interfaces
             foreach (string s in _schemaWrapper.Interfaces)
@@ -82,7 +83,7 @@ namespace ThinkBinary.SchemaToPoco.Core
                         EnumWrapper enumWrap = new EnumWrapper(enumField);
 
                         // Add comment if not null
-                        if (i.Value.Description != null)
+                        if (String.IsNullOrEmpty(i.Value.Description))
                             enumField.Comments.Add(new CodeCommentStatement(i.Value.Description));
 
                         foreach(var j in i.Value.Enum)

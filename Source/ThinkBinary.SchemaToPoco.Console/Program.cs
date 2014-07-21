@@ -70,7 +70,7 @@ namespace ThinkBinary.SchemaToPoco.Console
 				}
 
                 // Load schemas given a json file or directory
-                LoadSchemas(/*settings.Schema*/"C:\\Users\\SLiu\\Projects\\raml-to-dropwizard-csharp\\schema\\data-set.json");
+                LoadSchemas(settings.Schema);
 
                 foreach(JsonSchemaWrapper s in _schemas.Values) {
                     if (s.ToCreate)

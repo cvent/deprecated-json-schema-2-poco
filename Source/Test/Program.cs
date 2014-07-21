@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThinkBinary.SchemaToPoco.Core.Types;
 
 namespace Test
 {
@@ -27,8 +28,8 @@ namespace Test
             var personSchema = JsonConvert.DeserializeAnonymousType(schemaJson, definition);
             Console.WriteLine(personSchema.id);
             // true*/
-            Type t = Type.GetType("float", true);
-            Console.WriteLine(t.IsClass);
+            //Type t = new TypeBuilderHelper("com.cvent").GetCustomType("DataSet");
+            //Console.WriteLine(t.Name);
         }
     }
 }

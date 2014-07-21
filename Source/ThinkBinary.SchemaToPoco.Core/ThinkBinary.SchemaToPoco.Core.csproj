@@ -55,6 +55,7 @@
     <Compile Include="Types\JsonSchemaWrapper.cs" />
     <Compile Include="Types\NamespaceWrapper.cs" />
     <Compile Include="Types\PropertyWrapper.cs" />
+    <Compile Include="Types\TypeBuilderHelper.cs" />
     <Compile Include="Util\JsonSchemaUtils.cs" />
     <Compile Include="Util\StringUtils.cs" />
     <Compile Include="ValidationAttributes\MaxValueAttribute.cs" />

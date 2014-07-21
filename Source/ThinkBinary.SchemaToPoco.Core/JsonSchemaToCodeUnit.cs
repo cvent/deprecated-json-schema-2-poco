@@ -83,7 +83,7 @@ namespace ThinkBinary.SchemaToPoco.Core
                         EnumWrapper enumWrap = new EnumWrapper(enumField);
 
                         // Add comment if not null
-                        if (String.IsNullOrEmpty(i.Value.Description))
+                        if (!String.IsNullOrEmpty(i.Value.Description))
                             enumField.Comments.Add(new CodeCommentStatement(i.Value.Description));
 
                         foreach(var j in i.Value.Enum)
@@ -94,23 +94,33 @@ namespace ThinkBinary.SchemaToPoco.Core
                     }
                     else
                     {
-                        var type = JsonSchemaUtils.GetType(i.Value);
+                        Type type = JsonSchemaUtils.GetType(i.Value, _codeNamespace);
+                        string cleanType = type.Name;
+
+                        // Add imports
+                        nsWrap.AddImport(type.Namespace);
+                        
+                        // Check if it is an array
+                        if(JsonSchemaUtils.IsArray(i.Value)) {
+                            nsWrap.AddImport("System.Collections.Generic");
+                            cleanType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(i.Value), cleanType);
+                        }                        
 
                         CodeMemberField field = new CodeMemberField
                         {
                             Attributes = MemberAttributes.Public,
                             Name = "_" + i.Key.ToString(),
-                            Type = new CodeTypeReference(type)
+                            Type = new CodeTypeReference(cleanType)
                         };
 
                         // Add comment if not null
-                        if (i.Value.Description != null)
+                        if (!String.IsNullOrEmpty(i.Value.Description))
                             field.Comments.Add(new CodeCommentStatement(i.Value.Description));
 
                         clWrap.Property.Members.Add(field);
 
                         // Add setters/getters
-                        CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), type.ToString());
+                        CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), cleanType);
                         PropertyWrapper prWrap = new PropertyWrapper(property);
 
                         // Add comments and attributes

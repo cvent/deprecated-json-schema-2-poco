@@ -2,11 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using ThinkBinary.SchemaToPoco.Core.Types;
 
 namespace ThinkBinary.SchemaToPoco.Core.Util
 {
+    /// <summary>
+    /// Abstraction for the different schema array types.
+    /// </summary>
+    public enum ArrayType { List, HashSet };
+
     /// <summary>
     /// Common utilities for a JsonSchema.
     /// </summary>
@@ -48,42 +55,54 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         }
 
         /// <summary>
-        /// Get the type of the schema.
+        /// Get the array type for the given schema.
+        /// </summary>
+        /// <param name="schema">The schema.</param>
+        /// <exception cref="System.NotSupportedException">Thrown when given schema is not an array type.</exception>
+        /// <returns>The array type of the schema.</returns>
+        public static ArrayType GetArrayType(JsonSchema schema)
+        {
+            if (!IsArray(schema))
+                throw new NotSupportedException();
+
+            return schema.UniqueItems ? ArrayType.HashSet : ArrayType.List;
+        }
+
+        /// <summary>
+        /// Get the type of the schema. If it is an array, get the array type.
         /// </summary>
         /// <param name="schema">The JSON schema.</param>
+        /// <param name="ns">The namespace.</param>
         /// <returns>The type of the schema.</returns>
-        public static Type GetType(JsonSchema schema)
+        public static Type GetType(JsonSchema schema, string ns)
         {
             string toRet = DefaultType;
+            TypeBuilderHelper builder = new TypeBuilderHelper(ns);
 
             // Set the type to the type if it is not an array
             if (!IsArray(schema)) {
                 if (schema.Title != null)
-                    toRet = schema.Title;
+                    return builder.GetCustomType(schema.Title);
                 else if (schema.Type != null)
                     toRet = GetPrimitiveType(schema.Type);
             }
             else {
-                toRet = schema.UniqueItems ? "HashSet<" : "List<";
-
                 // Set the type to the title if it exists
                 if (schema.Title != null)
-                    toRet += schema.Title;
+                    return builder.GetCustomType(schema.Title);
                 else if (schema.Items.Count > 0)
                 {
                     // Set the type to the title of the items
                     if (schema.Items[0].Title != null)
-                        toRet += schema.Items[0].Title;
+                        return builder.GetCustomType(schema.Items[0].Title);
                     // Set the type to the type of the items
                     else if (schema.Items[0].Type != null)
-                        toRet += GetPrimitiveType(schema.Items[0].Type);
+                        toRet = GetPrimitiveType(schema.Items[0].Type);
                     else
-                        toRet += DefaultType;
+                        toRet = DefaultType;
                 }
                 else
-                    toRet += DefaultType;
-
-                toRet += ">";
+                    toRet = DefaultType;
             }
 
             return Type.GetType(toRet, true);

@@ -45,6 +45,10 @@ namespace ThinkBinary.SchemaToPoco.Util
             // Remove whitespace
             string ret = string.Join(null, arr);
 
+            // Make sure it begins with a letter or underscore
+            if (!Char.IsLetter(ret[0]) && ret[0] != '_')
+                ret = "_" + ret;
+
             return ret;
         }
     }

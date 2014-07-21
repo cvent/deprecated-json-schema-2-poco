@@ -2,7 +2,7 @@
 Converts JSON schema files into plain old CLR objects in C#.
 
 # Usage
-`\Location\To\Exe -s \Location\To\Json\Schema`
+`\Source\ -s \Location\To\Json\Schema`
 
 Optional flags:
 

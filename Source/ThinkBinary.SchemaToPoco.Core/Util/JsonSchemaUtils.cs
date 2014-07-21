@@ -7,23 +7,46 @@ using System.Threading.Tasks;
 
 namespace ThinkBinary.SchemaToPoco.Core.Util
 {
+    /// <summary>
+    /// Common utilities for a JsonSchema.
+    /// </summary>
     class JsonSchemaUtils
     {
+        /// <summary>
+        /// Check if the schema is an integer type.
+        /// </summary>
+        /// <param name="schema">The JSON shema.</param>
+        /// <returns>True if it is an integer.</returns>
         public static bool isInteger(JsonSchema schema)
         {
             return schema.Type != null && schema.Type.Value.ToString().Equals("Integer");
         }
 
+        /// <summary>
+        /// Check if the schema is an string type.
+        /// </summary>
+        /// <param name="schema">The JSON shema.</param>
+        /// <returns>True if it is an string.</returns>
         public static bool isString(JsonSchema schema)
         {
             return schema.Type != null && schema.Type.Value.ToString().Equals("String");
         }
 
+        /// <summary>
+        /// Check if the schema is an array type.
+        /// </summary>
+        /// <param name="schema">The JSON shema.</param>
+        /// <returns>True if it is an array.</returns>
         public static bool isArray(JsonSchema schema)
         {
             return schema.Type != null && schema.Type.Value.ToString().Equals("Array");
         }
 
+        /// <summary>
+        /// Get the type of the schema as a string.
+        /// </summary>
+        /// <param name="schema">The JSON schema.</param>
+        /// <returns>The type of the schema as a string.</returns>
         public static string getTypeString(JsonSchema schema)
         {
             // Set the type to the type if it is not an array

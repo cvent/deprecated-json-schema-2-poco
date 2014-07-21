@@ -16,16 +16,42 @@ using ThinkBinary.SchemaToPoco.Core.Types;
 
 namespace ThinkBinary.SchemaToPoco.Console
 {
+    /// <summary>
+    /// Main executor class.
+    /// </summary>
 	class Program
 	{
+        /// <summary>
+        /// Log information.
+        /// </summary>
 		private static Logger _log;
+
+        /// <summary>
+        /// Arguments from command line.
+        /// </summary>
 		private static OptionSet _options;
+
+        /// <summary>
+        /// Base directory.
+        /// </summary>
         private static string _baseDir;
+
+        /// <summary>
+        /// Namespace directory. ie. com.cvent would become com\cvent
+        /// </summary>
         private static string _nsDir;
+
+        /// <summary>
+        /// Keeps track of the found schemas.
+        /// </summary>
         private static Dictionary<string, JsonSchemaWrapper> _schemas = new Dictionary<string, JsonSchemaWrapper>();
+
+        /// <summary>
+        /// Resolving schemas so that they can be parsed.
+        /// </summary>
         private static JsonSchemaResolver _resolver = new JsonSchemaResolver();
 
-		static Int32 Main(string[] args)
+		public static Int32 Main(string[] args)
 		{
 			try
 			{
@@ -52,7 +78,7 @@ namespace ThinkBinary.SchemaToPoco.Console
                         var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(s, settings.Namespace);
                         var codeUnit = jsonSchemaToCodeUnit.Execute();
                         var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
-System.Console.WriteLine(csharpGenerator.Execute());
+//System.Console.WriteLine(csharpGenerator.Execute());
                         string saveLoc = _baseDir + @"\" + _nsDir + @"\" + s.Schema.Title + ".cs";
                         GenerateFile(csharpGenerator.Execute(), saveLoc);
                         System.Console.WriteLine("Wrote " + saveLoc);
@@ -68,6 +94,9 @@ System.Console.WriteLine(csharpGenerator.Execute());
 			}
 		}
 
+        /// <summary>
+        /// Configuring the logger.
+        /// </summary>
 		private static void ConfigureLogging()
 		{
 			var coloredConsoleTarget = new ColoredConsoleTarget
@@ -83,6 +112,11 @@ System.Console.WriteLine(csharpGenerator.Execute());
 			_log = LogManager.GetCurrentClassLogger();
 		}
 
+        /// <summary>
+        /// Configure command line options.
+        /// </summary>
+        /// <param name="arguements">Arguments from the command line.</param>
+        /// <returns>The command line options.</returns>
 		private static CommandLineSettings ConfigureCommandLineOptions(string[] arguements)
 		{
 			var settings = new CommandLineSettings();
@@ -102,6 +136,11 @@ System.Console.WriteLine(csharpGenerator.Execute());
 			return settings;
 		}
 
+        /// <summary>
+        /// Write to a file.
+        /// </summary>
+        /// <param name="data">Data to write to the file.</param>
+        /// <param name="path">Path to the file.</param>
         private static void GenerateFile(string data, string path)
         {
             StreamWriter sw = new StreamWriter(File.Open(path, FileMode.Create));
@@ -109,12 +148,20 @@ System.Console.WriteLine(csharpGenerator.Execute());
             sw.Close();
         }
 
+        /// <summary>
+        /// Generate all the directories to the path if they do not exist.
+        /// </summary>
+        /// <param name="ns">Namespace ie. com.cvent</param>
         private static void CreateDirectories(string ns)
         {
             _nsDir = ns.Replace('.', '\\');
             Directory.CreateDirectory(_baseDir + @"\" + _nsDir);
         }
 
+        /// <summary>
+        /// Load all the schemas from a file.
+        /// </summary>
+        /// <param name="file">File path.</param>
         private static void LoadSchemas(string file)
         {
             using (TextReader reader = File.OpenText(file))
@@ -124,6 +171,12 @@ System.Console.WriteLine(csharpGenerator.Execute());
             }
         }
 
+        /// <summary>
+        /// Recursively resolve all schemas.
+        /// </summary>
+        /// <param name="prevPath">Path to the current file.</param>
+        /// <param name="reader">TextReader for the file.</param>
+        /// <returns>An extended wrapper for the JsonSchema.</returns>
         private static JsonSchemaWrapper ResolveSchemas(string prevPath, TextReader reader)
         {
             string data = reader.ReadToEnd();

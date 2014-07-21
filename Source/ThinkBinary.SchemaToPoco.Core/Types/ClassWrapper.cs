@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace ThinkBinary.SchemaToPoco.Core.Types
 {
+    /// <summary>
+    /// Wrapper for a CodeDom class.
+    /// </summary>
     public class ClassWrapper : BaseWrapper<CodeTypeDeclaration>
     {
         public ClassWrapper(CodeTypeDeclaration cl)

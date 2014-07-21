@@ -9,14 +9,19 @@ using ThinkBinary.SchemaToPoco.Core.Util;
 
 namespace ThinkBinary.SchemaToPoco.Core.Types
 {
-    // Represents a property (the ones with getters and setters)
+    /// <summary>
+    /// Wrapper for an automatic property.
+    /// </summary>
     class PropertyWrapper : BaseWrapper<CodeMemberProperty>
     {
         public PropertyWrapper(CodeMemberProperty p) : base(p)
         {
         }
 
-        // Add all comments and attributes
+        /// <summary>
+        /// Add all comments and attributes.
+        /// </summary>
+        /// <param name="schema">The JsonSchema.</param>
         public void Populate(JsonSchema schema)
         {
             if (schema.Description != null)

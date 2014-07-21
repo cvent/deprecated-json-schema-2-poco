@@ -12,10 +12,24 @@ using ThinkBinary.SchemaToPoco.Util;
 
 namespace ThinkBinary.SchemaToPoco.Core
 {
+    /// <summary>
+    /// Model for converting a JsonSchema to a CodeCompileUnit
+    /// </summary>
     public class JsonSchemaToCodeUnit
     {
+        /// <summary>
+        /// The namespace for the document.
+        /// </summary>
         private readonly string _codeNamespace;
+
+        /// <summary>
+        /// The extended JsonSchema wrapper.
+        /// </summary>
         private JsonSchemaWrapper _schemaWrapper;
+
+        /// <summary>
+        /// The JsonSchema, for easy access.
+        /// </summary>
         private JsonSchema _schemaDocument;
 
         public JsonSchemaToCodeUnit(JsonSchemaWrapper schema, string requestedNamespace)
@@ -32,9 +46,10 @@ namespace ThinkBinary.SchemaToPoco.Core
         {
         }
 
-        /**
-         * Convert JsonSchema to CodeCompileUnit
-         * */
+        /// <summary>
+        /// Main executor function.
+        /// </summary>
+        /// <returns>A CodeCompileUnit.</returns>
         public CodeCompileUnit Execute()
         {
             var codeCompileUnit = new CodeCompileUnit();
@@ -100,8 +115,8 @@ namespace ThinkBinary.SchemaToPoco.Core
         /// <param name="field">The field to get and set.</param>
         /// <param name="name">The name of the property.</param>
         /// <param name="type">The type of the property.</param>
-        /// <returns></returns>
-        static CodeMemberProperty CreateProperty(string field, string name, string type)
+        /// <returns>The property.</returns>
+        public static CodeMemberProperty CreateProperty(string field, string name, string type)
         {
             CodeMemberProperty property = new CodeMemberProperty()
             {

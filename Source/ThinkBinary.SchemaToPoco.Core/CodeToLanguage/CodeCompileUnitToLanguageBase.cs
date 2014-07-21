@@ -6,9 +6,19 @@ using System.Text;
 
 namespace ThinkBinary.SchemaToPoco.Core.CodeToLanguage
 {
+    /// <summary>
+    /// Controller for converting a CodeCompileUnit to code given a code provider.
+    /// </summary>
 	public class CodeCompileUnitToLanguageBase
 	{
+        /// <summary>
+        /// The abstract representation of the code.
+        /// </summary>
 		private readonly CodeCompileUnit _codeCompileUnit;
+
+        /// <summary>
+        /// Constant represented a tab.
+        /// </summary>
 		private const string TabCharacter = "\t";
 
 		public CodeCompileUnitToLanguageBase(CodeCompileUnit codeCompileUnit)
@@ -17,6 +27,11 @@ namespace ThinkBinary.SchemaToPoco.Core.CodeToLanguage
 			_codeCompileUnit = codeCompileUnit;
 		}
 
+        /// <summary>
+        /// Convert the abstract representation of the code to functional code given a code provider.
+        /// </summary>
+        /// <param name="codeProvider">The code provider.</param>
+        /// <returns>The code as a string.</returns>
 		protected string CodeUnitToLanguage(CodeDomProvider codeProvider)
 		{
 			var stringBuilder = new StringBuilder();

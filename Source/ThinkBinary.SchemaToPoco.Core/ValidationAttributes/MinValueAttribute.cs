@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace ThinkBinary.SchemaToPoco.Core.ValidationAttributes
 {
+    /// <summary>
+    /// An attribute restricting a minimum value, inclusive, for an integer.
+    /// </summary>
     public class MinValueAttribute : ValidationAttribute
     {
+        /// <summary>
+        /// The minimum value.
+        /// </summary>
         private readonly int _minValue;
 
         public MinValueAttribute(int val)
@@ -17,6 +23,11 @@ namespace ThinkBinary.SchemaToPoco.Core.ValidationAttributes
             ErrorMessage = "Enter a value greater than or equal to " + _minValue;
         }
 
+        /// <summary>
+        /// Check if the given integer is valid.
+        /// </summary>
+        /// <param name="value">The integer.</param>
+        /// <returns>True if it is valid.</returns>
         public override bool IsValid(object value)
         {
             return (int)value >= _minValue;

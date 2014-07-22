@@ -23,9 +23,9 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
         public JsonSchema Schema { get; set; }
         
         /// <summary>
-        /// Fully qualified name of the class that this schema uses, if any
+        /// Namespace for this JSON schema to use.
         /// </summary>
-        public string CClass { get; set; }
+        public string Namespace { get; set; }
 
         /// <summary>
         /// Whether or not this schema should be generated or just referenced.

@@ -27,19 +27,19 @@ namespace ThinkBinary.SchemaToPoco.Console
 		private static Logger _log;
 
         /// <summary>
-        /// Arguments from command line.
+        /// Arguments from command line, raw format.
         /// </summary>
 		private static OptionSet _options;
+
+        /// <summary>
+        /// Arguments from command line.
+        /// </summary>
+        private static CommandLineSettings _settings;
 
         /// <summary>
         /// Base directory.
         /// </summary>
         private static string _baseDir;
-
-        /// <summary>
-        /// Namespace directory. ie. com.cvent would become com\cvent
-        /// </summary>
-        private static string _nsDir;
 
         /// <summary>
         /// Keeps track of the found schemas.
@@ -56,11 +56,13 @@ namespace ThinkBinary.SchemaToPoco.Console
 			try
 			{
 				ConfigureLogging();
-				var settings = ConfigureCommandLineOptions(args);
 
-                CreateDirectories(settings.Namespace);
+                // Initialize _settings, _baseDir
+				_settings = ConfigureCommandLineOptions(args);
 
-				if (settings.ShowHelp)
+                CreateDirectories(_settings.Namespace);
+
+				if (_settings.ShowHelp)
 				{
 					var description = new StringBuilder("JSON schema to POCO\nhttps://github.com/sbl03/json-schema-to-poco\n\n");
 					_options.WriteOptionDescriptions(new StringWriter(description));
@@ -70,18 +72,23 @@ namespace ThinkBinary.SchemaToPoco.Console
 				}
 
                 // Load schemas given a json file or directory
-                LoadSchemas(settings.Schema);
+                LoadSchemas(_settings.Schema);
 
                 foreach(JsonSchemaWrapper s in _schemas.Values) {
                     if (s.ToCreate)
                     {
-                        var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(s, settings.Namespace);
+                        var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(s, s.Namespace);
                         var codeUnit = jsonSchemaToCodeUnit.Execute();
                         var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
-System.Console.WriteLine(csharpGenerator.Execute());
-                        string saveLoc = _baseDir + @"\" + _nsDir + @"\" + s.Schema.Title + ".cs";
-                        GenerateFile(csharpGenerator.Execute(), saveLoc);
-                        System.Console.WriteLine("Wrote " + saveLoc);
+
+                        if (_settings.Verbose)
+                            System.Console.WriteLine(csharpGenerator.Execute());
+                        else
+                        {
+                            string saveLoc = _baseDir + @"\" + s.Namespace.Replace('.', '\\') + @"\" + s.Schema.Title + ".cs";
+                            GenerateFile(csharpGenerator.Execute(), saveLoc);
+                            System.Console.WriteLine("Wrote " + saveLoc);
+                        }
                     }
                 }
 
@@ -126,6 +133,7 @@ System.Console.WriteLine(csharpGenerator.Execute());
 				{"n=|namespace=","Namespace contaning all of the generated classes", ns => settings.Namespace = ns},
 				{"s=|schema=", "File path to the schema file", s => settings.Schema = s},
 				{"o=|output=", "Directory to save files", fn => settings.OutputFiledir = fn},
+                {"v|verbose","Print out files in console without generating", v => settings.Verbose = !string.IsNullOrWhiteSpace(v)},
 				{"?|help","Show this help message", h => settings.ShowHelp = !string.IsNullOrWhiteSpace(h)}
 			};
 
@@ -153,8 +161,8 @@ System.Console.WriteLine(csharpGenerator.Execute());
         /// <param name="ns">Namespace ie. com.cvent</param>
         private static void CreateDirectories(string ns)
         {
-            _nsDir = ns.Replace('.', '\\');
-            Directory.CreateDirectory(_baseDir + @"\" + _nsDir);
+            var nsDir = ns.Replace('.', '\\');
+            Directory.CreateDirectory(_baseDir + @"\" + nsDir);
         }
 
         /// <summary>
@@ -200,16 +208,19 @@ System.Console.WriteLine(csharpGenerator.Execute());
             JsonSchema parsed = JsonSchema.Parse(data, _resolver);
             parsed.Id = Path.GetFileName(prevPath);
             JsonSchemaWrapper toReturn = new JsonSchemaWrapper(parsed);
+            toReturn.Namespace = _settings.Namespace;
 
             // If csharpType is specified
             if (!String.IsNullOrEmpty(deserialized.csharpType))
             {
+                // Create directories and set namespace
                 int lastIndex = deserialized.csharpType.LastIndexOf('.');
                 string cType = deserialized.csharpType.Substring(lastIndex == -1 ? 0 : lastIndex + 1);
 
-                toReturn.CClass = deserialized.csharpType;
+                toReturn.Namespace = deserialized.csharpType.Substring(0, lastIndex);
                 toReturn.Schema.Title = cType;
-                toReturn.ToCreate = false;
+
+                CreateDirectories(toReturn.Namespace);
             }
 
             // If csharpInterfaces is specified
@@ -222,7 +233,7 @@ System.Console.WriteLine(csharpGenerator.Execute());
                     // If type cannot be found, create a new type
                     if (t == null)
                     {
-                        TypeBuilderHelper builder = new TypeBuilderHelper(_nsDir);
+                        TypeBuilderHelper builder = new TypeBuilderHelper(toReturn.Namespace);
                         t = builder.GetCustomType(s);
                     }
 

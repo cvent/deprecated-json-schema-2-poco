@@ -12,6 +12,7 @@ namespace ThinkBinary.SchemaToPoco.Console
 			Namespace = "generated";
 			OutputFiledir = Directory.GetCurrentDirectory();
 			ShowHelp = false;
+            Verbose = false;
 		}
 
         /// <summary>
@@ -33,5 +34,10 @@ namespace ThinkBinary.SchemaToPoco.Console
         /// Show command line help.
         /// </summary>
 		public bool ShowHelp { get; set; }
+
+        /// <summary>
+        /// Print out generated code without saving files.
+        /// </summary>
+        public bool Verbose { get; set; }
 	}
 }

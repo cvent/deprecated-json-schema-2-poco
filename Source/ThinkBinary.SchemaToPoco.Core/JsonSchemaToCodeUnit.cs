@@ -63,16 +63,16 @@ namespace ThinkBinary.SchemaToPoco.Core
             codeClass.Attributes = MemberAttributes.Public;
             ClassWrapper clWrap = new ClassWrapper(codeClass);
 
+            // Add imports for interfaces and dependencies
+            nsWrap.AddImportsFromWrapper(_schemaWrapper);
+
             // Add comments and attributes for class
             if(!String.IsNullOrEmpty(_schemaDocument.Description))
                 clWrap.AddComment(_schemaDocument.Description);
 
-            // Add interfaces & import
+            // Add interfaces
             foreach (Type t in _schemaWrapper.Interfaces)
-            {
                 clWrap.AddInterface(t.Name);
-                nsWrap.AddImport(t.Namespace);
-            }
 
             // Add properties with getters/setters
             if (_schemaDocument.Properties != null)
@@ -98,15 +98,9 @@ namespace ThinkBinary.SchemaToPoco.Core
                     }
                     else
                     {
-                        JsonSchemaWrapper dependency = _schemaWrapper.GetDependencyFromSchema(i.Value);
-                        Type type;
-//if(dependency != null)
-//System.Console.WriteLine(dependency.FullPath ?? "nope");
-                        if(dependency != null)
-                            type = JsonSchemaUtils.GetType(dependency);
-                        else
-                            type = JsonSchemaUtils.GetType(i.Value, _codeNamespace);
-
+                        // WARNING: This assumes the namespace of the property is the same as the parent.
+                        // This should not be a problem since imports are handled for all dependencies at the beginning.
+                        Type type = JsonSchemaUtils.GetType(i.Value, _codeNamespace);
                         bool isCustomType = type.Namespace.Equals(_codeNamespace);
                         string strType = String.Empty;
 

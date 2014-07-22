@@ -219,7 +219,6 @@ namespace ThinkBinary.SchemaToPoco.Console
             JsonSchemaWrapper toReturn = new JsonSchemaWrapper(parsed);
             toReturn.Namespace = _settings.Namespace;
             toReturn.Dependencies = dependencies;
-            toReturn.FullPath = filePath;
 
             // If csharpType is specified
             if (!String.IsNullOrEmpty(deserialized.csharpType))
@@ -231,7 +230,8 @@ namespace ThinkBinary.SchemaToPoco.Console
                 toReturn.Namespace = deserialized.csharpType.Substring(0, lastIndex);
                 toReturn.Schema.Title = cType;
 
-                CreateDirectories(toReturn.Namespace);
+                if(!_settings.Verbose)
+                    CreateDirectories(toReturn.Namespace);
             }
 
             // If csharpInterfaces is specified

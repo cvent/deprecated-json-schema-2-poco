@@ -63,6 +63,19 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
         }
 
         /// <summary>
+        /// Add imports for dependencies and interfaces.
+        /// </summary>
+        /// <param name="wrapper"></param>
+        public void AddImportsFromWrapper(JsonSchemaWrapper wrapper)
+        {
+            foreach (var i in wrapper.Interfaces)
+                AddImport(i.Namespace);
+
+            foreach (var i in wrapper.Dependencies)
+                AddImport(i.Namespace);
+        }
+
+        /// <summary>
         /// Add default imports to the namespace.
         /// </summary>
         private void AddDefaultImports()

@@ -22,7 +22,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         /// <summary>
         /// Default type to set to if not specified elsewhere.
         /// </summary>
-        private const string DefaultType = "Object";
+        private const string DefaultType = "System.Object";
 
         /// <summary>
         /// What primitive objects map to in C#.
@@ -80,16 +80,6 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         }
 
         /// <summary>
-        /// Convenience method that calls GetType(wrapper.Schema, wrapper.Namespace).
-        /// </summary>
-        /// <param name="wrapper">The Json schema wrapper.</param>
-        /// <returns>The type of the schema.</returns>
-        public static Type GetType(JsonSchemaWrapper wrapper)
-        {
-            return GetType(wrapper.Schema, wrapper.Namespace);
-        }
-
-        /// <summary>
         /// Get the type of the schema. If it is an array, get the array type.
         /// </summary>
         /// <param name="schema">The JSON schema.</param>
@@ -119,11 +109,11 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
                     // Set the type to the type of the items
                     else if (schema.Items[0].Type != null)
                         toRet = GetPrimitiveType(schema.Items[0].Type);
-                    else
-                        toRet = DefaultType;
+                    //else
+                        //toRet = DefaultType;
                 }
-                else
-                    toRet = DefaultType;
+                //else
+                    //toRet = DefaultType;
             }
 
             return Type.GetType(toRet, true);

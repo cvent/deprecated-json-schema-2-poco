@@ -67,8 +67,12 @@ namespace ThinkBinary.SchemaToPoco.Core
             nsWrap.AddImportsFromWrapper(_schemaWrapper);
 
             // Add comments and attributes for class
-            if(!String.IsNullOrEmpty(_schemaDocument.Description))
+            if (!String.IsNullOrEmpty(_schemaDocument.Description))
                 clWrap.AddComment(_schemaDocument.Description);
+
+            // Add extended class
+            if (_schemaDocument.Extends != null && _schemaDocument.Extends.Count > 0)
+                clWrap.AddInterface(JsonSchemaUtils.GetType(_schemaDocument.Extends[0], _codeNamespace).Name);
 
             // Add interfaces
             foreach (Type t in _schemaWrapper.Interfaces)
@@ -90,7 +94,7 @@ namespace ThinkBinary.SchemaToPoco.Core
                         if (!String.IsNullOrEmpty(i.Value.Description))
                             enumField.Comments.Add(new CodeCommentStatement(i.Value.Description));
 
-                        foreach(var j in i.Value.Enum)
+                        foreach (var j in i.Value.Enum)
                             enumWrap.AddMember(StringUtils.Sanitize(j.ToString()));
 
                         // Add to namespace
@@ -109,7 +113,8 @@ namespace ThinkBinary.SchemaToPoco.Core
                         nsWrap.AddImportsFromSchema(i.Value);
 
                         // Get the property type
-                        if (isCustomType) {
+                        if (isCustomType)
+                        {
                             if (JsonSchemaUtils.IsArray(i.Value))
                                 strType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(i.Value), type.Name);
                             else

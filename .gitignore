@@ -174,3 +174,6 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+Source/Schema*
+generated/*

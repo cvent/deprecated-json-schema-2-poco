@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.CSharp;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 using System;
 using System.CodeDom;
@@ -98,22 +99,28 @@ namespace ThinkBinary.SchemaToPoco.Core
                     else
                     {
                         Type type = JsonSchemaUtils.GetType(i.Value, _codeNamespace);
-                        string cleanType = type.Name;
                         bool isCustomType = type.Namespace.Equals(_codeNamespace);
+                        string strType = String.Empty;
 
                         // Add imports
                         nsWrap.AddImport(type.Namespace);
                         nsWrap.AddImportsFromSchema(i.Value);
-                        
-                        // Check if it is an array
-                        if(JsonSchemaUtils.IsArray(i.Value))
-                            cleanType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(i.Value), cleanType);
+
+                        // Get the property type
+                        if (isCustomType) {
+                            if (JsonSchemaUtils.IsArray(i.Value))
+                                strType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(i.Value), type.Name);
+                            else
+                                strType = type.Name;
+                        }
+                        else if (JsonSchemaUtils.IsArray(i.Value))
+                            strType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(i.Value), new CSharpCodeProvider().GetTypeOutput(new CodeTypeReference(type)));
 
                         CodeMemberField field = new CodeMemberField
                         {
                             Attributes = MemberAttributes.Public,
                             Name = "_" + i.Key.ToString(),
-                            Type = isCustomType ? new CodeTypeReference(cleanType) : new CodeTypeReference(type)
+                            Type = IsPrimitive(type) && !JsonSchemaUtils.IsArray(i.Value) ? new CodeTypeReference(type) : new CodeTypeReference(strType)
                         };
 
                         // Add comment if not null
@@ -168,6 +175,16 @@ namespace ThinkBinary.SchemaToPoco.Core
                 new CodeFieldReferenceExpression(null, field)));
 
             return property;
+        }
+
+        /// <summary>
+        /// Check if a type is a primitive, or can be treated like one (ie. lowercased type).
+        /// </summary>
+        /// <param name="t">The type.</param>
+        /// <returns>Whether or not it is a primitive type.</returns>
+        private static bool IsPrimitive(Type t)
+        {
+            return t.IsPrimitive || t == typeof(Decimal) || t == typeof(String) || t == typeof(Object);
         }
     }
 }

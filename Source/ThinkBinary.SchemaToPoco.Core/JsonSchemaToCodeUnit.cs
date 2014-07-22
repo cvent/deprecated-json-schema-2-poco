@@ -98,7 +98,15 @@ namespace ThinkBinary.SchemaToPoco.Core
                     }
                     else
                     {
-                        Type type = JsonSchemaUtils.GetType(i.Value, _codeNamespace);
+                        JsonSchemaWrapper dependency = _schemaWrapper.GetDependencyFromSchema(i.Value);
+                        Type type;
+//if(dependency != null)
+//System.Console.WriteLine(dependency.FullPath ?? "nope");
+                        if(dependency != null)
+                            type = JsonSchemaUtils.GetType(dependency);
+                        else
+                            type = JsonSchemaUtils.GetType(i.Value, _codeNamespace);
+
                         bool isCustomType = type.Namespace.Equals(_codeNamespace);
                         string strType = String.Empty;
 

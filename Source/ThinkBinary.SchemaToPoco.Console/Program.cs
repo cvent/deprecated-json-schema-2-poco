@@ -184,31 +184,42 @@ namespace ThinkBinary.SchemaToPoco.Console
         /// <param name="prevPath">Path to the current file.</param>
         /// <param name="reader">TextReader for the file.</param>
         /// <returns>An extended wrapper for the JsonSchema.</returns>
-        private static JsonSchemaWrapper ResolveSchemas(string prevPath, TextReader reader)
+        private static JsonSchemaWrapper ResolveSchemas(string filePath, TextReader reader)
         {
             string data = reader.ReadToEnd();
             var definition = new { csharpType = string.Empty, csharpInterfaces = new string[]{} };
             var deserialized = JsonConvert.DeserializeAnonymousType(data, definition);
+            var dependencies = new List<JsonSchemaWrapper>();
 
             MatchCollection matches = Regex.Matches(data, @"\""\$ref\""\s*:\s*\""(.*.json)\""");
             foreach (Match match in matches)
             {
-                string currPath = Path.GetDirectoryName(prevPath) + @"\" + match.Groups[1].Value;
+                // Get the full path to the file
+                string currPath = Path.GetDirectoryName(filePath) + @"\" + match.Groups[1].Value;
+                JsonSchemaWrapper schema;
 
                 if (!_schemas.ContainsKey(currPath))
                 {
                     using (TextReader reader2 = File.OpenText(currPath))
                     {
-                        JsonSchemaWrapper schema = ResolveSchemas(currPath, reader2);
+                        schema = ResolveSchemas(currPath, reader2);
                         _schemas.Add(currPath, schema);
                     }
                 }
+                else
+                    schema = _schemas[currPath];
+
+                // Add schema to dependencies
+                dependencies.Add(schema);
             }
 
+            // Set up schema and wrapper to return
             JsonSchema parsed = JsonSchema.Parse(data, _resolver);
-            parsed.Id = Path.GetFileName(prevPath);
+            parsed.Id = Path.GetFileName(filePath);
             JsonSchemaWrapper toReturn = new JsonSchemaWrapper(parsed);
             toReturn.Namespace = _settings.Namespace;
+            toReturn.Dependencies = dependencies;
+            toReturn.FullPath = filePath;
 
             // If csharpType is specified
             if (!String.IsNullOrEmpty(deserialized.csharpType))

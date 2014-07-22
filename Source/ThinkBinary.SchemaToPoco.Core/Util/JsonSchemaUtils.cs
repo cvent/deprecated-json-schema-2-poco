@@ -80,6 +80,16 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         }
 
         /// <summary>
+        /// Convenience method that calls GetType(wrapper.Schema, wrapper.Namespace).
+        /// </summary>
+        /// <param name="wrapper">The Json schema wrapper.</param>
+        /// <returns>The type of the schema.</returns>
+        public static Type GetType(JsonSchemaWrapper wrapper)
+        {
+            return GetType(wrapper.Schema, wrapper.Namespace);
+        }
+
+        /// <summary>
         /// Get the type of the schema. If it is an array, get the array type.
         /// </summary>
         /// <param name="schema">The JSON schema.</param>

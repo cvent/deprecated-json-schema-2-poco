@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json.Schema;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThinkBinary.SchemaToPoco.Core.Util;
 
 namespace ThinkBinary.SchemaToPoco.Core.Types
 {
@@ -39,6 +41,25 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
         public void AddClass(CodeTypeDeclaration cl)
         {
             Namespace.Types.Add(cl);
+        }
+
+        /// <summary>
+        /// Adds imports for attributes and lists.
+        /// </summary>
+        /// <param name="schema">The schema to import from.</param>
+        public void AddImportsFromSchema(JsonSchema schema)
+        {
+            // Arrays
+            if(JsonSchemaUtils.IsArray(schema))
+                AddImport("System.Collections.Generic");
+
+            // MinValue | MaxValue
+            if (schema.Minimum != null || schema.Maximum != null)
+                AddImport("ThinkBinary.SchemaToPoco.Core.ValidationAttributes");
+
+            // Required | StringLength
+            if ((schema.Required != null && schema.Required.Value) || schema.MaximumLength != null || schema.MinimumLength != null)
+                AddImport("System.ComponentModel.DataAnnotations");
         }
 
         /// <summary>

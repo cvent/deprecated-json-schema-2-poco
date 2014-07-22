@@ -35,7 +35,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
         /// <summary>
         /// List of interfaces.
         /// </summary>
-        public List<string> Interfaces { get; set; }
+        public List<Type> Interfaces { get; set; }
 
         public JsonSchemaWrapper(JsonSchema schema)
         {
@@ -43,7 +43,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
 
             // Initialize defaults
             ToCreate = true;
-            Interfaces = new List<string>();
+            Interfaces = new List<Type>();
 
             Schema.Title = Schema.Title ?? DefaultClassName;
         }

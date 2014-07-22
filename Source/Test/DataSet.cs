@@ -1,49 +1,26 @@
-﻿using System;
-
-namespace Test
+﻿namespace generated
 {
-    public class DataSet
+    using System;
+    using ThinkBinary.SchemaToPoco.Core.ValidationAttributes;
+    using System.ComponentModel.DataAnnotations;
+
+
+    public class DefaultClassName
     {
 
-        public Array _results;
+        public string _foo;
 
-        public Array _dimensions;
-
-        public Object _measure;
-
-        public virtual Array Results
+        [Required()]
+        [StringLength(20, MinimumLength = 10)]
+        public virtual string Foo
         {
             get
             {
-                return _results;
+                return _foo;
             }
             set
             {
-                _results = value;
-            }
-        }
-
-        public virtual Array Dimensions
-        {
-            get
-            {
-                return _dimensions;
-            }
-            set
-            {
-                _dimensions = value;
-            }
-        }
-
-        public virtual Object Measure
-        {
-            get
-            {
-                return _measure;
-            }
-            set
-            {
-                _measure = value;
+                _foo = value;
             }
         }
     }

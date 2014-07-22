@@ -66,9 +66,12 @@ namespace ThinkBinary.SchemaToPoco.Core
             if(!String.IsNullOrEmpty(_schemaDocument.Description))
                 clWrap.AddComment(_schemaDocument.Description);
 
-            // Add interfaces
-            foreach (string s in _schemaWrapper.Interfaces)
-                clWrap.AddInterface(s);
+            // Add interfaces & import
+            foreach (Type t in _schemaWrapper.Interfaces)
+            {
+                clWrap.AddInterface(t.Name);
+                nsWrap.AddImport(t.Namespace);
+            }
 
             // Add properties with getters/setters
             if (_schemaDocument.Properties != null)
@@ -100,12 +103,11 @@ namespace ThinkBinary.SchemaToPoco.Core
 
                         // Add imports
                         nsWrap.AddImport(type.Namespace);
+                        nsWrap.AddImportsFromSchema(i.Value);
                         
                         // Check if it is an array
-                        if(JsonSchemaUtils.IsArray(i.Value)) {
-                            nsWrap.AddImport("System.Collections.Generic");
+                        if(JsonSchemaUtils.IsArray(i.Value))
                             cleanType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(i.Value), cleanType);
-                        }                        
 
                         CodeMemberField field = new CodeMemberField
                         {

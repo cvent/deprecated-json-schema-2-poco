@@ -25,6 +25,17 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         private const string DefaultType = "Object";
 
         /// <summary>
+        /// What primitive objects map to in C#.
+        /// </summary>
+        private static Dictionary<string, string> Primitives = new Dictionary<string, string>() {
+            {"String", "System.String"},
+            {"Float", "System.Single"},
+            {"Integer", "System.Int32"},
+            {"Boolean", "System.Boolean"},
+            {"Object", "System.Object"}
+        };
+
+        /// <summary>
         /// Check if the schema is an integer type.
         /// </summary>
         /// <param name="schema">The JSON shema.</param>
@@ -117,16 +128,8 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         {
             string sType = type.ToString();
 
-            var primitives = new Dictionary<string, string>() {
-                {"String", "System.String"},
-                {"Float", "System.Single"},
-                {"Integer", "System.Int32"},
-                {"Boolean", "System.Boolean"},
-                {"Object", "System.Object"}
-            };
-
-            if(primitives.ContainsKey(sType))
-                return primitives[sType];
+            if(Primitives.ContainsKey(sType))
+                return Primitives[sType];
 
             return sType;
         }

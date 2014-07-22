@@ -35,27 +35,17 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
             {
                 if (schema.Minimum != null)
                 {
-                    if (schema.ExclusiveMinimum != null)
-                    {
-                        if (schema.ExclusiveMinimum.Value)
-                            AddAttribute("MinValue", schema.Minimum.Value + 1);
-                        else
-                            AddAttribute("MinValue", schema.Minimum.Value);
-                    }
+                    if (schema.ExclusiveMinimum != null && schema.ExclusiveMinimum.Value)
+                        AddAttribute("MinValue", (int) schema.Minimum.Value + 1);
                     else
-                        AddAttribute("MinValue", schema.Minimum.Value);
+                        AddAttribute("MinValue", (int) schema.Minimum.Value);
                 }
                 if (schema.Maximum != null)
                 {
-                    if (schema.ExclusiveMaximum != null)
-                    {
-                        if (schema.ExclusiveMaximum.Value)
-                            AddAttribute("MaxValue", schema.Maximum.Value - 1);
-                        else
-                            AddAttribute("MaxValue", schema.Maximum.Value);
-                    }
+                    if (schema.ExclusiveMaximum != null && schema.ExclusiveMaximum.Value)
+                        AddAttribute("MaxValue", (int) schema.Maximum.Value - 1);
                     else
-                        AddAttribute("MaxValue", schema.Maximum.Value);
+                        AddAttribute("MaxValue", (int) schema.Maximum.Value);
                 }
             }
 

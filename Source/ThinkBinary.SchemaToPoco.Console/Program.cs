@@ -215,8 +215,19 @@ System.Console.WriteLine(csharpGenerator.Execute());
             // If csharpInterfaces is specified
             if(deserialized.csharpInterfaces != null)
                 foreach (string s in deserialized.csharpInterfaces)
-                    if (!String.IsNullOrEmpty(s))
-                        toReturn.Interfaces.Add(s);
+                {
+                    // Try to resolve the type
+                    Type t = Type.GetType(s, false);
+
+                    // If type cannot be found, create a new type
+                    if (t == null)
+                    {
+                        TypeBuilderHelper builder = new TypeBuilderHelper(_nsDir);
+                        t = builder.GetCustomType(s);
+                    }
+
+                    toReturn.Interfaces.Add(t);
+                }
 
             return toReturn;
         }

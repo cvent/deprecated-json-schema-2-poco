@@ -83,18 +83,20 @@ namespace ThinkBinary.SchemaToPoco.Core
             {
                 foreach (var i in _schemaDocument.Properties)
                 {
+                    var schema = i.Value;
+
                     // If it is an enum
-                    if (i.Value.Enum != null)
+                    if (schema.Enum != null)
                     {
                         string name = StringUtils.Capitalize(i.Key.ToString());
                         CodeTypeDeclaration enumField = new CodeTypeDeclaration(name);
                         EnumWrapper enumWrap = new EnumWrapper(enumField);
 
                         // Add comment if not null
-                        if (!String.IsNullOrEmpty(i.Value.Description))
-                            enumField.Comments.Add(new CodeCommentStatement(i.Value.Description));
+                        if (!String.IsNullOrEmpty(schema.Description))
+                            enumField.Comments.Add(new CodeCommentStatement(schema.Description));
 
-                        foreach (var j in i.Value.Enum)
+                        foreach (var j in schema.Enum)
                             enumWrap.AddMember(StringUtils.Sanitize(j.ToString()));
 
                         // Add to namespace
@@ -104,35 +106,35 @@ namespace ThinkBinary.SchemaToPoco.Core
                     {
                         // WARNING: This assumes the namespace of the property is the same as the parent.
                         // This should not be a problem since imports are handled for all dependencies at the beginning.
-                        Type type = JsonSchemaUtils.GetType(i.Value, _codeNamespace);
+                        Type type = JsonSchemaUtils.GetType(schema, _codeNamespace);
                         bool isCustomType = type.Namespace.Equals(_codeNamespace);
                         string strType = String.Empty;
 
                         // Add imports
                         nsWrap.AddImport(type.Namespace);
-                        nsWrap.AddImportsFromSchema(i.Value);
+                        nsWrap.AddImportsFromSchema(schema);
 
                         // Get the property type
                         if (isCustomType)
                         {
-                            if (JsonSchemaUtils.IsArray(i.Value))
-                                strType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(i.Value), type.Name);
+                            if (JsonSchemaUtils.IsArray(schema))
+                                strType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(schema), type.Name);
                             else
                                 strType = type.Name;
                         }
-                        else if (JsonSchemaUtils.IsArray(i.Value))
-                            strType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(i.Value), new CSharpCodeProvider().GetTypeOutput(new CodeTypeReference(type)));
+                        else if (JsonSchemaUtils.IsArray(schema))
+                            strType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(schema), new CSharpCodeProvider().GetTypeOutput(new CodeTypeReference(type)));
 
                         CodeMemberField field = new CodeMemberField
                         {
                             Attributes = MemberAttributes.Public,
                             Name = "_" + i.Key.ToString(),
-                            Type = IsPrimitive(type) && !JsonSchemaUtils.IsArray(i.Value) ? new CodeTypeReference(type) : new CodeTypeReference(strType)
+                            Type = IsPrimitive(type) && !JsonSchemaUtils.IsArray(schema) ? new CodeTypeReference(type) : new CodeTypeReference(strType)
                         };
 
                         // Add comment if not null
-                        if (!String.IsNullOrEmpty(i.Value.Description))
-                            field.Comments.Add(new CodeCommentStatement(i.Value.Description));
+                        if (!String.IsNullOrEmpty(schema.Description))
+                            field.Comments.Add(new CodeCommentStatement(schema.Description));
 
                         clWrap.Property.Members.Add(field);
 
@@ -141,7 +143,11 @@ namespace ThinkBinary.SchemaToPoco.Core
                         PropertyWrapper prWrap = new PropertyWrapper(property);
 
                         // Add comments and attributes
-                        prWrap.Populate(i.Value);
+                        prWrap.Populate(schema);
+
+                        // Add default, if any
+                        if (schema.Default != null)
+                            clWrap.AddDefault(field.Name, schema.Default.ToObject(typeof(object)));
 
                         clWrap.Property.Members.Add(property);
                     }

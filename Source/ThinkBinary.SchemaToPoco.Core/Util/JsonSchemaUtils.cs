@@ -93,27 +93,23 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
             // Set the type to the type if it is not an array
             if (!IsArray(schema)) {
                 if (schema.Title != null)
-                    return builder.GetCustomType(schema.Title);
+                    return builder.GetCustomType(schema.Title, true);
                 else if (schema.Type != null)
                     toRet = GetPrimitiveType(schema.Type);
             }
             else {
                 // Set the type to the title if it exists
                 if (schema.Title != null)
-                    return builder.GetCustomType(schema.Title);
+                    return builder.GetCustomType(schema.Title, true);
                 else if (schema.Items.Count > 0)
                 {
                     // Set the type to the title of the items
                     if (schema.Items[0].Title != null)
-                        return builder.GetCustomType(schema.Items[0].Title);
+                        return builder.GetCustomType(schema.Items[0].Title, true);
                     // Set the type to the type of the items
                     else if (schema.Items[0].Type != null)
                         toRet = GetPrimitiveType(schema.Items[0].Type);
-                    //else
-                        //toRet = DefaultType;
                 }
-                //else
-                    //toRet = DefaultType;
             }
 
             return Type.GetType(toRet, true);

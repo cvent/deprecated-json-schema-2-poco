@@ -40,10 +40,11 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
         /// Get a custom Type object.
         /// </summary>
         /// <param name="type">The name of the type.</param>
+        /// <param name="includeNs">Whether or not to include the namespace.</param>
         /// <returns>A custom Type object.</returns>
-        public Type GetCustomType(string type)
+        public Type GetCustomType(string type, bool includeNs)
         {
-            return _mb.DefineType(_ns + "." + type).CreateType();
+            return _mb.DefineType(includeNs ? _ns + "." + type : type).CreateType();
         }
     }
 }

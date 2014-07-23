@@ -64,7 +64,7 @@ namespace ThinkBinary.SchemaToPoco.Console
 
 				if (_settings.ShowHelp)
 				{
-					var description = new StringBuilder("JSON schema to POCO\nhttps://github.com/sbl03/json-schema-to-poco\n\n");
+                    var description = new StringBuilder("JSON schema to POCO\nhttps://github.com/cvent/json-schema-2-poco\n\n");
 					_options.WriteOptionDescriptions(new StringWriter(description));
 					System.Console.WriteLine(description.ToString());
 
@@ -245,7 +245,7 @@ namespace ThinkBinary.SchemaToPoco.Console
                     if (t == null)
                     {
                         TypeBuilderHelper builder = new TypeBuilderHelper(toReturn.Namespace);
-                        t = builder.GetCustomType(s);
+                        t = builder.GetCustomType(s, !s.Contains("."));
                     }
 
                     toReturn.Interfaces.Add(t);

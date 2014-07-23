@@ -69,6 +69,9 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
                 
                 if(flag)
                     AddAttribute("StringLength", args.ToArray());
+
+                if (!String.IsNullOrEmpty(schema.Pattern))
+                    AddAttribute("RegularExpression", new CodeAttributeArgument(new CodeSnippetExpression(string.Format("@\"{0}\"", schema.Pattern))));
             }
 
             // Array only flags

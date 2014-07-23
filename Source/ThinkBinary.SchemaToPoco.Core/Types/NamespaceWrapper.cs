@@ -57,8 +57,9 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
             if (schema.Minimum != null || schema.Maximum != null)
                 AddImport("ThinkBinary.SchemaToPoco.Core.ValidationAttributes");
 
-            // Required | StringLength
-            if ((schema.Required != null && schema.Required.Value) || schema.MaximumLength != null || schema.MinimumLength != null)
+            // Required | StringLength | MinItems | MaxItems | Pattern
+            if ((schema.Required != null && schema.Required.Value) || schema.MaximumLength != null || schema.MinimumLength != null
+                || schema.MinimumItems != null || schema.MaximumItems != null || schema.Pattern != null)
                 AddImport("System.ComponentModel.DataAnnotations");
         }
 

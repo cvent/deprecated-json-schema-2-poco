@@ -11,7 +11,7 @@
         public string _foo;
 
         [Required()]
-        [StringLength(20, MinimumLength = 10)]
+        [MinLength(2)]
         public virtual string Foo
         {
             get

@@ -74,8 +74,10 @@ namespace ThinkBinary.SchemaToPoco.Core.Types
             // Array only flags
             if (JsonSchemaUtils.IsArray(schema))
             {
-                //if(schema.MinimumItems != null)
-
+                if (schema.MinimumItems != null)
+                    AddAttribute("MinLength", (int)schema.MinimumItems.Value);
+                if (schema.MaximumItems != null)
+                    AddAttribute("MaxLength", (int)schema.MaximumItems.Value);
             }
         }
     }

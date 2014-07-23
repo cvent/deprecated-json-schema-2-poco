@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Web;
 using System.Text.RegularExpressions;
 using ThinkBinary.SchemaToPoco.Core.Types;
+using ThinkBinary.SchemaToPoco.Core.Util;
 
 namespace ThinkBinary.SchemaToPoco.Console
 {
@@ -45,11 +46,6 @@ namespace ThinkBinary.SchemaToPoco.Console
         /// Keeps track of the found schemas.
         /// </summary>
         private static Dictionary<string, JsonSchemaWrapper> _schemas = new Dictionary<string, JsonSchemaWrapper>();
-
-        /// <summary>
-        /// Resolving schemas so that they can be parsed.
-        /// </summary>
-        private static JsonSchemaResolver _resolver = new JsonSchemaResolver();
 
 		public static Int32 Main(string[] args)
 		{
@@ -173,85 +169,11 @@ namespace ThinkBinary.SchemaToPoco.Console
         {
             using (TextReader reader = File.OpenText(file))
             {
-                JsonSchemaWrapper schema = ResolveSchemas(file, reader);
+                JsonSchemaResolverUtil resolver = new JsonSchemaResolverUtil(_settings.Namespace, !_settings.Verbose);
+                JsonSchemaWrapper schema = resolver.ResolveSchemas(file, reader.ReadToEnd());
+                _schemas = resolver._schemas;
                 _schemas.Add(file, schema);
             }
-        }
-
-        /// <summary>
-        /// Recursively resolve all schemas.
-        /// </summary>
-        /// <param name="prevPath">Path to the current file.</param>
-        /// <param name="reader">TextReader for the file.</param>
-        /// <returns>An extended wrapper for the JsonSchema.</returns>
-        private static JsonSchemaWrapper ResolveSchemas(string filePath, TextReader reader)
-        {
-            string data = reader.ReadToEnd();
-            var definition = new { csharpType = string.Empty, csharpInterfaces = new string[]{} };
-            var deserialized = JsonConvert.DeserializeAnonymousType(data, definition);
-            var dependencies = new List<JsonSchemaWrapper>();
-
-            MatchCollection matches = Regex.Matches(data, @"\""\$ref\""\s*:\s*\""(.*.json)\""");
-            foreach (Match match in matches)
-            {
-                // Get the full path to the file
-                string currPath = Path.GetDirectoryName(filePath) + @"\" + match.Groups[1].Value;
-                JsonSchemaWrapper schema;
-
-                if (!_schemas.ContainsKey(currPath))
-                {
-                    using (TextReader reader2 = File.OpenText(currPath))
-                    {
-                        schema = ResolveSchemas(currPath, reader2);
-                        _schemas.Add(currPath, schema);
-                    }
-                }
-                else
-                    schema = _schemas[currPath];
-
-                // Add schema to dependencies
-                dependencies.Add(schema);
-            }
-
-            // Set up schema and wrapper to return
-            JsonSchema parsed = JsonSchema.Parse(data, _resolver);
-            parsed.Id = Path.GetFileName(filePath);
-            JsonSchemaWrapper toReturn = new JsonSchemaWrapper(parsed);
-            toReturn.Namespace = _settings.Namespace;
-            toReturn.Dependencies = dependencies;
-
-            // If csharpType is specified
-            if (!String.IsNullOrEmpty(deserialized.csharpType))
-            {
-                // Create directories and set namespace
-                int lastIndex = deserialized.csharpType.LastIndexOf('.');
-                string cType = deserialized.csharpType.Substring(lastIndex == -1 ? 0 : lastIndex + 1);
-
-                toReturn.Namespace = deserialized.csharpType.Substring(0, lastIndex);
-                toReturn.Schema.Title = cType;
-
-                if(!_settings.Verbose)
-                    CreateDirectories(toReturn.Namespace);
-            }
-
-            // If csharpInterfaces is specified
-            if(deserialized.csharpInterfaces != null)
-                foreach (string s in deserialized.csharpInterfaces)
-                {
-                    // Try to resolve the type
-                    Type t = Type.GetType(s, false);
-
-                    // If type cannot be found, create a new type
-                    if (t == null)
-                    {
-                        TypeBuilderHelper builder = new TypeBuilderHelper(toReturn.Namespace);
-                        t = builder.GetCustomType(s, !s.Contains("."));
-                    }
-
-                    toReturn.Interfaces.Add(t);
-                }
-
-            return toReturn;
         }
 	}
 }

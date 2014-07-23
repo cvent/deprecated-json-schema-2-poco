@@ -14,22 +14,14 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            /*string schemaJson;
+            string schemaJson = @"{
+              '$id' : 'http://jsonschema.net/examples/',
+              'properties': {
+                'A': {'$ref':'#B.json'}
+              }
+            }";
 
-            schemaJson = @"{
-  'id': 'person',
-  'type': 'object',
-  'properties': {
-    'name': {'type':'string'},
-    'age': {'type':'integer'}
-  }
-}";
-            var definition = new { id = "" };
-            var personSchema = JsonConvert.DeserializeAnonymousType(schemaJson, definition);
-            Console.WriteLine(personSchema.id);
-            // true*/
-            //Type t = new TypeBuilderHelper("com.cvent").GetCustomType("DataSet");
-            //Console.WriteLine(t.Name);
+            JsonSchema parsed = JsonSchema.Parse(schemaJson);
         }
     }
 }

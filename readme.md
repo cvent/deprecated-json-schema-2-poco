@@ -2,7 +2,11 @@
 Converts JSON schema files into plain old CLR objects in C#.
 
 # Usage
-`\Source\ThinkBinary.SchemaToPoco.Console\bin\Debug\ThinkBinary.SchemaToPoco.Console.exe -s \Location\To\Json\Schema`
+1. Build the solution in Visual Studio (Ctrl+Shift+B), or `msbuild \Path\to\sln`.
+2. Run the following command:
+```
+\Source\Cvent.SchemaToPoco.Console\bin\Debug\Cvent.SchemaToPoco.Console.exe -s \Location\To\Json\Schema
+```
 
 ### Optional Flags
 

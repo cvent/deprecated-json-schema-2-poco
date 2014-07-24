@@ -126,5 +126,8 @@ Default: `<exe location>\generated`
 Prints out generated code without generating files
 
 ## [Reference](https://github.com/cvent/json-schema-2-poco/wiki/Reference)
+Current version: 1.0 (Alpha)
+
+[View changelog](https://github.com/cvent/json-schema-2-poco/wiki/Changelog)
 
 ## [Troubleshooting](https://github.com/cvent/json-schema-2-poco/wiki/Troubleshooting)

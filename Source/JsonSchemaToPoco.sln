@@ -3,7 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{E9B2CAF5-CF94-481D-8A9E-98F325BD362A}"
 	ProjectSection(SolutionItems) = preProject
-		..\licence.md = ..\licence.md
 		..\readme.md = ..\readme.md
 	EndProjectSection
 EndProject

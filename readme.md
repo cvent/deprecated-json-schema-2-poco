@@ -16,6 +16,6 @@ Converts JSON schema files into plain old CLR objects in C#.
 
 `-v` (Prints out generated code without generating files)
 
-### [Reference](https://github.com/cvent/json-schema-2-poco/wiki/Reference)
+# [Reference](https://github.com/cvent/json-schema-2-poco/wiki/Reference)
 
-### [Troubleshooting](https://github.com/cvent/json-schema-2-poco/wiki/Troubleshooting)
+# [Troubleshooting](https://github.com/cvent/json-schema-2-poco/wiki/Troubleshooting)

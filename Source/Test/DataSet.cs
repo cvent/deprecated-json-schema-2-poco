@@ -1,7 +1,7 @@
 ﻿namespace generated
 {
     using System;
-    using ThinkBinary.SchemaToPoco.Core.ValidationAttributes;
+    using Cvent.SchemaToPoco.Core.ValidationAttributes;
     using System.ComponentModel.DataAnnotations;
 
 

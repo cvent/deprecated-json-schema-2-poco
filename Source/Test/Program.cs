@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ThinkBinary.SchemaToPoco.Core.Types;
+using Cvent.SchemaToPoco.Core.Types;
 
 namespace Test
 {

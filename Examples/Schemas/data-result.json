@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-03/schema#",
+  "title": "DataResult",
+  "description": "A result list for data sets",
+  "type": "array",
+  "items": {
+    "type": "string"
+  },
+  "uniqueItems": false
+}

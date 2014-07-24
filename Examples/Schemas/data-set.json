@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-03/schema#",
+  "title": "DataSet",
+  "description": "A result set and description of measures and values",
+  "type": "object",
+  "properties": {
+    "results": {
+      "$ref": "data-result.json"
+    },
+    "dimensions": {
+      "type": "array",
+      "description": "An array of data dimensions included in a result set",
+      "items": {
+        "$ref": "data-dimension.json"
+      },
+      "uniqueItems": true
+    },
+    "measure": {
+      "$ref": "data-measure.json",
+      "description": "single measure represented in this data set."
+    }
+  }
+}

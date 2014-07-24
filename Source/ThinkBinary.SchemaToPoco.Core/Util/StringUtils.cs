@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,6 +51,21 @@ namespace ThinkBinary.SchemaToPoco.Util
                 ret = "_" + ret;
 
             return ret;
+        }
+
+        /// <summary>
+        /// Load data from a Uri.
+        /// </summary>
+        /// <param name="uri">The Uri.</param>
+        /// <returns>A string with all the data.</returns>
+        public static string LoadURI(Uri uri)
+        {
+            if (uri.IsFile)
+                using (TextReader reader = File.OpenText(uri.ToString()))
+                {
+                    return reader.ReadToEnd();
+                }
+            else return null;
         }
     }
 }

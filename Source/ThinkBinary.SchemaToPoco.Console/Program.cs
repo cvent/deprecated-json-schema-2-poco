@@ -170,9 +170,7 @@ namespace ThinkBinary.SchemaToPoco.Console
             using (TextReader reader = File.OpenText(file))
             {
                 JsonSchemaResolverUtil resolver = new JsonSchemaResolverUtil(_settings.Namespace, !_settings.Verbose);
-                JsonSchemaWrapper schema = resolver.ResolveSchemas(file, reader.ReadToEnd());
-                _schemas = resolver._schemas;
-                _schemas.Add(file, schema);
+                _schemas = resolver.ResolveSchemas(file, reader.ReadToEnd());
             }
         }
 	}

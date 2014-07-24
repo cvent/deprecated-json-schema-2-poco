@@ -24,7 +24,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         /// <summary>
         /// Keeps track of the found schemas.
         /// </summary>
-        public Dictionary<string, JsonSchemaWrapper> _schemas = new Dictionary<string, JsonSchemaWrapper>();
+        private Dictionary<string, JsonSchemaWrapper> _schemas = new Dictionary<string, JsonSchemaWrapper>();
 
         /// <summary>
         /// The namespace.
@@ -48,12 +48,25 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         }
 
         /// <summary>
+        /// Resolve all schemas.
+        /// </summary>
+        /// <param name="prevPath">Path to the current file.</param>
+        /// <param name="data">String data for the file.</param>
+        /// <returns>A Dictionary containing all resolved schemas.</returns>
+        public Dictionary<string, JsonSchemaWrapper> ResolveSchemas(string filePath, string data)
+        {
+            JsonSchemaWrapper schema = ResolveSchemaHelper(filePath, data);
+            _schemas.Add(filePath, schema);
+            return _schemas;
+        }
+
+        /// <summary>
         /// Recursively resolve all schemas.
         /// </summary>
         /// <param name="prevPath">Path to the current file.</param>
-        /// <param name="reader">TextReader for the file.</param>
+        /// <param name="data">String data for the file.</param>
         /// <returns>An extended wrapper for the JsonSchema.</returns>
-        public JsonSchemaWrapper ResolveSchemas(string filePath, string data)
+        private JsonSchemaWrapper ResolveSchemaHelper(string filePath, string data)
         {
             var definition = new { csharpType = string.Empty, csharpInterfaces = new string[] { } };
             var deserialized = JsonConvert.DeserializeAnonymousType(data, definition);
@@ -70,7 +83,7 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
                 {
                     using (TextReader reader2 = File.OpenText(currPath))
                     {
-                        schema = ResolveSchemas(currPath, reader2.ReadToEnd());
+                        schema = ResolveSchemaHelper(currPath, reader2.ReadToEnd());
                         _schemas.Add(currPath, schema);
                     }
                 }

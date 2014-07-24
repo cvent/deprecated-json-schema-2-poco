@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cvent.SchemaToPoco.Core.UnitTests</RootNamespace>
-    <AssemblyName>ThinkBinary.SchemaToPoco.Core.UnitTests</AssemblyName>
+    <AssemblyName>Cvent.SchemaToPoco.Core.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -54,7 +54,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Cvent.SchemaToPoco.Core\Cvent.SchemaToPoco.Core.csproj">
       <Project>{B504BB29-7224-4F82-80ED-BDB344ACABEF}</Project>
-      <Name>ThinkBinary.SchemaToPoco.Core</Name>
+      <Name>Cvent.SchemaToPoco.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

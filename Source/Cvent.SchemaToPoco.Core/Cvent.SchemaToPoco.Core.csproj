@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cvent.SchemaToPoco.Core</RootNamespace>
-    <AssemblyName>ThinkBinary.SchemaToPoco.Core</AssemblyName>
+    <AssemblyName>Cvent.SchemaToPoco.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

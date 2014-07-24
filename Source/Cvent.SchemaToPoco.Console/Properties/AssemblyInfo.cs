@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("ThinkBinary.SchemaToPoco.Console")]
+[assembly: AssemblyTitle("Cvent.SchemaToPoco.Console")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ThinkBinary")]
-[assembly: AssemblyProduct("ThinkBinary.SchemaToPoco.Console")]
-[assembly: AssemblyCopyright("Copyright ©  2014 Pervez Choudhury")]
+[assembly: AssemblyCompany("Cvent")]
+[assembly: AssemblyProduct("Cvent.SchemaToPoco.Console")]
+[assembly: AssemblyCopyright("Copyright ©  2014 Cvent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

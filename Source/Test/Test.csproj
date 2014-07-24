@@ -55,7 +55,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Cvent.SchemaToPoco.Core\Cvent.SchemaToPoco.Core.csproj">
       <Project>{b504bb29-7224-4f82-80ed-bdb344acabef}</Project>
-      <Name>ThinkBinary.SchemaToPoco.Core</Name>
+      <Name>Cvent.SchemaToPoco.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cvent.SchemaToPoco.Console</RootNamespace>
-    <AssemblyName>ThinkBinary.SchemaToPoco.Console</AssemblyName>
+    <AssemblyName>Cvent.SchemaToPoco.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -79,7 +79,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Cvent.SchemaToPoco.Core\Cvent.SchemaToPoco.Core.csproj">
       <Project>{B504BB29-7224-4F82-80ED-BDB344ACABEF}</Project>
-      <Name>ThinkBinary.SchemaToPoco.Core</Name>
+      <Name>Cvent.SchemaToPoco.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

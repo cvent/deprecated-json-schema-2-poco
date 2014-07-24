@@ -55,7 +55,7 @@ namespace Cvent.SchemaToPoco.Core.Types
 
             // MinValue | MaxValue
             if (schema.Minimum != null || schema.Maximum != null)
-                AddImport("ThinkBinary.SchemaToPoco.Core.ValidationAttributes");
+                AddImport("Cvent.SchemaToPoco.Core.ValidationAttributes");
 
             // Required | StringLength | MinItems | MaxItems | Pattern
             if ((schema.Required != null && schema.Required.Value) || schema.MaximumLength != null || schema.MinimumLength != null

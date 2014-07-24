@@ -56,6 +56,7 @@
     <Compile Include="Types\NamespaceWrapper.cs" />
     <Compile Include="Types\PropertyWrapper.cs" />
     <Compile Include="Types\TypeBuilderHelper.cs" />
+    <Compile Include="Util\IOUtils.cs" />
     <Compile Include="Util\JsonSchemaResolverUtil.cs" />
     <Compile Include="Util\JsonSchemaUtils.cs" />
     <Compile Include="Util\StringUtils.cs" />

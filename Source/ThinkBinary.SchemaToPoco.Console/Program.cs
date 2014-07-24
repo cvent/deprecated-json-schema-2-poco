@@ -56,7 +56,7 @@ namespace ThinkBinary.SchemaToPoco.Console
                 // Initialize _settings, _baseDir
 				_settings = ConfigureCommandLineOptions(args);
 
-                CreateDirectories(_settings.Namespace);
+                IOUtils.CreateDirectoryFromNamespace(_baseDir, _settings.Namespace);
 
 				if (_settings.ShowHelp)
 				{
@@ -152,16 +152,6 @@ namespace ThinkBinary.SchemaToPoco.Console
         }
 
         /// <summary>
-        /// Generate all the directories to the path if they do not exist.
-        /// </summary>
-        /// <param name="ns">Namespace ie. com.cvent</param>
-        private static void CreateDirectories(string ns)
-        {
-            var nsDir = ns.Replace('.', '\\');
-            Directory.CreateDirectory(_baseDir + @"\" + nsDir);
-        }
-
-        /// <summary>
         /// Load all the schemas from a file.
         /// </summary>
         /// <param name="file">File path.</param>
@@ -169,7 +159,7 @@ namespace ThinkBinary.SchemaToPoco.Console
         {
             using (TextReader reader = File.OpenText(file))
             {
-                JsonSchemaResolverUtil resolver = new JsonSchemaResolverUtil(_settings.Namespace, !_settings.Verbose);
+                JsonSchemaResolverUtil resolver = new JsonSchemaResolverUtil(_settings.Namespace, !_settings.Verbose, _baseDir);
                 _schemas = resolver.ResolveSchemas(file, reader.ReadToEnd());
             }
         }

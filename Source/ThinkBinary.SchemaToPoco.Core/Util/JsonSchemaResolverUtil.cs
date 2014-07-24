@@ -37,14 +37,20 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
         private bool _createDirs;
 
         /// <summary>
+        /// The absolute path to the base generated directory.
+        /// </summary>
+        private string _baseDir;
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="ns">settings.Namespace</param>
         /// <param name="createDirs">settings.Verbose</param>
-        public JsonSchemaResolverUtil(string ns, bool createDirs)
+        public JsonSchemaResolverUtil(string ns, bool createDirs, string baseDir)
         {
             _ns = ns;
             _createDirs = createDirs;
+            _baseDir = baseDir;
         }
 
         /// <summary>
@@ -111,8 +117,8 @@ namespace ThinkBinary.SchemaToPoco.Core.Util
                 toReturn.Namespace = deserialized.csharpType.Substring(0, lastIndex);
                 toReturn.Schema.Title = cType;
 
-                //if (_createDirs)
-                   //CreateDirectories(toReturn.Namespace);
+                if (_createDirs)
+                   IOUtils.CreateDirectoryFromNamespace(_baseDir, toReturn.Namespace);
             }
 
             // If csharpInterfaces is specified

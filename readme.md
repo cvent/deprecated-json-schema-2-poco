@@ -1,7 +1,7 @@
 # JSON Schema to POCO
 Converts JSON schema files into plain old CLR objects in C#.
 
-# Usage
+## Usage
 1. Build the solution in Visual Studio (Ctrl+Shift+B), or `msbuild \Path\to\sln`.
 2. Run the following command:
 ```
@@ -16,6 +16,6 @@ Converts JSON schema files into plain old CLR objects in C#.
 
 `-v` (Prints out generated code without generating files)
 
-# [Reference](https://github.com/cvent/json-schema-2-poco/wiki/Reference)
+## [Reference](https://github.com/cvent/json-schema-2-poco/wiki/Reference)
 
-# [Troubleshooting](https://github.com/cvent/json-schema-2-poco/wiki/Troubleshooting)
+## [Troubleshooting](https://github.com/cvent/json-schema-2-poco/wiki/Troubleshooting)

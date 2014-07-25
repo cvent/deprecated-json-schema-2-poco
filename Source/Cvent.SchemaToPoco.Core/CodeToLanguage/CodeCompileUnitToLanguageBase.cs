@@ -7,45 +7,48 @@ using System.Text;
 namespace Cvent.SchemaToPoco.Core.CodeToLanguage
 {
     /// <summary>
-    /// Controller for converting a CodeCompileUnit to code given a code provider.
+    ///     Controller for converting a CodeCompileUnit to code given a code provider.
     /// </summary>
-	public class CodeCompileUnitToLanguageBase
-	{
+    public class CodeCompileUnitToLanguageBase
+    {
         /// <summary>
-        /// The abstract representation of the code.
+        ///     Constant represented a tab.
         /// </summary>
-		private readonly CodeCompileUnit _codeCompileUnit;
+        private const string TabCharacter = "\t";
 
         /// <summary>
-        /// Constant represented a tab.
+        ///     The abstract representation of the code.
         /// </summary>
-		private const string TabCharacter = "\t";
+        private readonly CodeCompileUnit _codeCompileUnit;
 
-		public CodeCompileUnitToLanguageBase(CodeCompileUnit codeCompileUnit)
-		{
-			if (codeCompileUnit == null) throw new ArgumentNullException("codeCompileUnit");
-			_codeCompileUnit = codeCompileUnit;
-		}
+        public CodeCompileUnitToLanguageBase(CodeCompileUnit codeCompileUnit)
+        {
+            if (codeCompileUnit == null)
+            {
+                throw new ArgumentNullException("codeCompileUnit");
+            }
+            _codeCompileUnit = codeCompileUnit;
+        }
 
         /// <summary>
-        /// Convert the abstract representation of the code to functional code given a code provider.
+        ///     Convert the abstract representation of the code to functional code given a code provider.
         /// </summary>
         /// <param name="codeProvider">The code provider.</param>
         /// <returns>The code as a string.</returns>
-		protected string CodeUnitToLanguage(CodeDomProvider codeProvider)
-		{
-			var stringBuilder = new StringBuilder();
-			var stringWriter = new StringWriter(stringBuilder);
-			var writer = new IndentedTextWriter(stringWriter, TabCharacter);
-			codeProvider.GenerateCodeFromCompileUnit(_codeCompileUnit, writer, new CodeGeneratorOptions
-			{
-				BlankLinesBetweenMembers = true,
-				VerbatimOrder = false,
-				BracingStyle = "C"
-			});
+        protected string CodeUnitToLanguage(CodeDomProvider codeProvider)
+        {
+            var stringBuilder = new StringBuilder();
+            var stringWriter = new StringWriter(stringBuilder);
+            var writer = new IndentedTextWriter(stringWriter, TabCharacter);
+            codeProvider.GenerateCodeFromCompileUnit(_codeCompileUnit, writer, new CodeGeneratorOptions
+            {
+                BlankLinesBetweenMembers = true,
+                VerbatimOrder = false,
+                BracingStyle = "C"
+            });
 
-			var output = stringBuilder.ToString();
-			return output;
-		}
-	}
+            string output = stringBuilder.ToString();
+            return output;
+        }
+    }
 }

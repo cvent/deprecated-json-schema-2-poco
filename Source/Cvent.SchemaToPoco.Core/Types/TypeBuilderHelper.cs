@@ -1,26 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Cvent.SchemaToPoco.Core.Types
 {
     /// <summary>
-    /// Type builder to build custom Type objects.
+    ///     Type builder to build custom Type objects.
     /// </summary>
     public class TypeBuilderHelper
     {
+        /// <summary>
+        ///     The common namespace for this builder.
+        /// </summary>
+        private readonly string _ns;
+
         private AssemblyBuilder _ab;
         private ModuleBuilder _mb;
-
-        /// <summary>
-        /// The common namespace for this builder.
-        /// </summary>
-        private string _ns;
 
         public TypeBuilderHelper(string ns)
         {
@@ -30,14 +26,13 @@ namespace Cvent.SchemaToPoco.Core.Types
 
         private void Init()
         {
-            AssemblyName name = new AssemblyName();
-            name.Name = "TmpAssembly";
+            var name = new AssemblyName {Name = "TmpAssembly"};
             _ab = Thread.GetDomain().DefineDynamicAssembly(name, AssemblyBuilderAccess.Run);
             _mb = _ab.DefineDynamicModule("ModuleOne", false);
         }
 
         /// <summary>
-        /// Get a custom Type object.
+        ///     Get a custom Type object.
         /// </summary>
         /// <param name="type">The name of the type.</param>
         /// <param name="includeNs">Whether or not to include the namespace.</param>

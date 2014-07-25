@@ -1,41 +1,39 @@
-﻿using Microsoft.CSharp;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Schema;
-using System;
+﻿using System;
 using System.CodeDom;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
 using Cvent.SchemaToPoco.Core.Types;
 using Cvent.SchemaToPoco.Core.Util;
-using Cvent.SchemaToPoco.Util;
+using Microsoft.CSharp;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 
 namespace Cvent.SchemaToPoco.Core
 {
     /// <summary>
-    /// Model for converting a JsonSchema to a CodeCompileUnit
+    ///     Model for converting a JsonSchema to a CodeCompileUnit
     /// </summary>
     public class JsonSchemaToCodeUnit
     {
         /// <summary>
-        /// The namespace for the document.
+        ///     The namespace for the document.
         /// </summary>
         private readonly string _codeNamespace;
 
         /// <summary>
-        /// The extended JsonSchema wrapper.
+        ///     The JsonSchema, for easy access.
         /// </summary>
-        private JsonSchemaWrapper _schemaWrapper;
+        private readonly JsonSchema _schemaDocument;
 
         /// <summary>
-        /// The JsonSchema, for easy access.
+        ///     The extended JsonSchema wrapper.
         /// </summary>
-        private JsonSchema _schemaDocument;
+        private readonly JsonSchemaWrapper _schemaWrapper;
 
         public JsonSchemaToCodeUnit(JsonSchemaWrapper schema, string requestedNamespace)
         {
-            if (schema == null || schema.Schema == null) throw new ArgumentNullException("schemaDocument");
+            if (schema == null || schema.Schema == null)
+            {
+                throw new ArgumentNullException("schema");
+            }
 
             _schemaWrapper = schema;
             _schemaDocument = schema.Schema;
@@ -48,7 +46,7 @@ namespace Cvent.SchemaToPoco.Core
         }
 
         /// <summary>
-        /// Main executor function.
+        ///     Main executor function.
         /// </summary>
         /// <returns>A CodeCompileUnit.</returns>
         public CodeCompileUnit Execute()
@@ -56,48 +54,57 @@ namespace Cvent.SchemaToPoco.Core
             var codeCompileUnit = new CodeCompileUnit();
 
             // Set namespace
-            NamespaceWrapper nsWrap = new NamespaceWrapper(new CodeNamespace(_codeNamespace));
+            var nsWrap = new NamespaceWrapper(new CodeNamespace(_codeNamespace));
 
             // Set class
-            CodeTypeDeclaration codeClass = new CodeTypeDeclaration(_schemaDocument.Title);
-            codeClass.Attributes = MemberAttributes.Public;
-            ClassWrapper clWrap = new ClassWrapper(codeClass);
+            var codeClass = new CodeTypeDeclaration(_schemaDocument.Title) {Attributes = MemberAttributes.Public};
+            var clWrap = new ClassWrapper(codeClass);
 
             // Add imports for interfaces and dependencies
             nsWrap.AddImportsFromWrapper(_schemaWrapper);
 
             // Add comments and attributes for class
             if (!String.IsNullOrEmpty(_schemaDocument.Description))
+            {
                 clWrap.AddComment(_schemaDocument.Description);
+            }
 
             // Add extended class
             if (_schemaDocument.Extends != null && _schemaDocument.Extends.Count > 0)
+            {
                 clWrap.AddInterface(JsonSchemaUtils.GetType(_schemaDocument.Extends[0], _codeNamespace).Name);
+            }
 
             // Add interfaces
             foreach (Type t in _schemaWrapper.Interfaces)
+            {
                 clWrap.AddInterface(t.Name);
+            }
 
             // Add properties with getters/setters
             if (_schemaDocument.Properties != null)
             {
                 foreach (var i in _schemaDocument.Properties)
                 {
-                    var schema = i.Value;
+                    JsonSchema schema = i.Value;
 
                     // If it is an enum
                     if (schema.Enum != null)
                     {
-                        string name = StringUtils.Capitalize(i.Key.ToString());
-                        CodeTypeDeclaration enumField = new CodeTypeDeclaration(name);
-                        EnumWrapper enumWrap = new EnumWrapper(enumField);
+                        string name = StringUtils.Capitalize(i.Key);
+                        var enumField = new CodeTypeDeclaration(name);
+                        var enumWrap = new EnumWrapper(enumField);
 
                         // Add comment if not null
                         if (!String.IsNullOrEmpty(schema.Description))
+                        {
                             enumField.Comments.Add(new CodeCommentStatement(schema.Description));
+                        }
 
-                        foreach (var j in schema.Enum)
-                            enumWrap.AddMember(StringUtils.Sanitize(j.ToString()));
+                        foreach (JToken j in schema.Enum)
+                        {
+                            enumWrap.AddMember(StringUtils.SanitizeIdentifier(j.ToString()));
+                        }
 
                         // Add to namespace
                         nsWrap.AddClass(enumWrap.Property);
@@ -107,7 +114,7 @@ namespace Cvent.SchemaToPoco.Core
                         // WARNING: This assumes the namespace of the property is the same as the parent.
                         // This should not be a problem since imports are handled for all dependencies at the beginning.
                         Type type = JsonSchemaUtils.GetType(schema, _codeNamespace);
-                        bool isCustomType = type.Namespace.Equals(_codeNamespace);
+                        bool isCustomType = type.Namespace != null && type.Namespace.Equals(_codeNamespace);
                         string strType = String.Empty;
 
                         // Add imports
@@ -117,37 +124,45 @@ namespace Cvent.SchemaToPoco.Core
                         // Get the property type
                         if (isCustomType)
                         {
-                            if (JsonSchemaUtils.IsArray(schema))
-                                strType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(schema), type.Name);
-                            else
-                                strType = type.Name;
+                            strType = JsonSchemaUtils.IsArray(schema) ? string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(schema), type.Name) : type.Name;
                         }
                         else if (JsonSchemaUtils.IsArray(schema))
-                            strType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(schema), new CSharpCodeProvider().GetTypeOutput(new CodeTypeReference(type)));
+                        {
+                            strType = string.Format("{0}<{1}>", JsonSchemaUtils.GetArrayType(schema),
+                                new CSharpCodeProvider().GetTypeOutput(new CodeTypeReference(type)));
+                        }
 
-                        CodeMemberField field = new CodeMemberField
+                        var field = new CodeMemberField
                         {
                             Attributes = MemberAttributes.Public,
-                            Name = "_" + i.Key.ToString(),
-                            Type = IsPrimitive(type) && !JsonSchemaUtils.IsArray(schema) ? new CodeTypeReference(type) : new CodeTypeReference(strType)
+                            Name = "_" + i.Key,
+                            Type =
+                                IsPrimitive(type) && !JsonSchemaUtils.IsArray(schema)
+                                    ? new CodeTypeReference(type)
+                                    : new CodeTypeReference(strType)
                         };
 
                         // Add comment if not null
                         if (!String.IsNullOrEmpty(schema.Description))
+                        {
                             field.Comments.Add(new CodeCommentStatement(schema.Description));
+                        }
 
                         clWrap.Property.Members.Add(field);
 
                         // Add setters/getters
-                        CodeMemberProperty property = CreateProperty("_" + i.Key.ToString(), StringUtils.Capitalize(i.Key.ToString()), field.Type.BaseType);
-                        PropertyWrapper prWrap = new PropertyWrapper(property);
+                        CodeMemberProperty property = CreateProperty("_" + i.Key,
+                            StringUtils.Capitalize(i.Key), field.Type.BaseType);
+                        var prWrap = new PropertyWrapper(property);
 
                         // Add comments and attributes
                         prWrap.Populate(schema);
 
                         // Add default, if any
                         if (schema.Default != null)
-                            clWrap.AddDefault(field.Name, schema.Default.ToObject(typeof(object)));
+                        {
+                            clWrap.AddDefault(field.Name, field.Type, schema.Default.ToObject(typeof (object)));
+                        }
 
                         clWrap.Property.Members.Add(property);
                     }
@@ -162,8 +177,8 @@ namespace Cvent.SchemaToPoco.Core
         }
 
         /// <summary>
-        /// Creates a public property with getters and setters that wrap the 
-        /// specified field.
+        ///     Creates a public property with getters and setters that wrap the
+        ///     specified field.
         /// </summary>
         /// <param name="field">The field to get and set.</param>
         /// <param name="name">The name of the property.</param>
@@ -171,7 +186,7 @@ namespace Cvent.SchemaToPoco.Core
         /// <returns>The property.</returns>
         public static CodeMemberProperty CreateProperty(string field, string name, string type)
         {
-            CodeMemberProperty property = new CodeMemberProperty()
+            var property = new CodeMemberProperty
             {
                 Name = name,
                 Type = new CodeTypeReference(type),
@@ -179,25 +194,25 @@ namespace Cvent.SchemaToPoco.Core
             };
 
             property.SetStatements.Add(
-              new CodeAssignStatement(
-                new CodeFieldReferenceExpression(null, field),
+                new CodeAssignStatement(
+                    new CodeFieldReferenceExpression(null, field),
                     new CodePropertySetValueReferenceExpression()));
 
             property.GetStatements.Add(
-              new CodeMethodReturnStatement(
-                new CodeFieldReferenceExpression(null, field)));
+                new CodeMethodReturnStatement(
+                    new CodeFieldReferenceExpression(null, field)));
 
             return property;
         }
 
         /// <summary>
-        /// Check if a type is a primitive, or can be treated like one (ie. lowercased type).
+        ///     Check if a type is a primitive, or can be treated like one (ie. lowercased type).
         /// </summary>
         /// <param name="t">The type.</param>
         /// <returns>Whether or not it is a primitive type.</returns>
         private static bool IsPrimitive(Type t)
         {
-            return t.IsPrimitive || t == typeof(Decimal) || t == typeof(String) || t == typeof(Object);
+            return t.IsPrimitive || t == typeof (Decimal) || t == typeof (String) || t == typeof (Object);
         }
     }
 }

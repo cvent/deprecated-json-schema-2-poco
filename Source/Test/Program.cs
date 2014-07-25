@@ -1,18 +1,10 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Cvent.SchemaToPoco.Core.Types;
+﻿using Newtonsoft.Json.Schema;
 
 namespace Test
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             string schemaJson = @"{
               '$id' : 'http://jsonschema.net/examples/',

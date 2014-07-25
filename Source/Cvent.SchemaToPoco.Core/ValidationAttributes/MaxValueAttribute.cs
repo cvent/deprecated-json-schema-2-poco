@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Cvent.SchemaToPoco.Core.ValidationAttributes
 {
     /// <summary>
-    /// An attribute restricting a maximum value, inclusive for an integer.
+    ///     An attribute restricting a maximum value, inclusive for an integer.
     /// </summary>
     public class MaxValueAttribute : ValidationAttribute
     {
         /// <summary>
-        /// The maximum value.
+        ///     The maximum value.
         /// </summary>
         private readonly int _maxValue;
 
@@ -24,13 +19,13 @@ namespace Cvent.SchemaToPoco.Core.ValidationAttributes
         }
 
         /// <summary>
-        /// Check if the given integer is valid.
+        ///     Check if the given integer is valid.
         /// </summary>
         /// <param name="value">The integer.</param>
         /// <returns>True if it is valid.</returns>
         public override bool IsValid(object value)
         {
-            return (int)value >= _maxValue;
+            return (int) value >= _maxValue;
         }
     }
 }

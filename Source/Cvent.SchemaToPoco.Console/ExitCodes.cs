@@ -1,8 +1,8 @@
 ﻿namespace Cvent.SchemaToPoco.Console
 {
-	enum ExitCodes
-	{
-		Ok = 0,
-		AbnormalExit = 1
-	}
+    internal enum ExitCodes
+    {
+        Ok = 0,
+        AbnormalExit = 1
+    }
 }

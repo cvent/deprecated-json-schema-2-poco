@@ -1,51 +1,49 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Schema;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Cvent.SchemaToPoco.Core.Types;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Schema;
 
 namespace Cvent.SchemaToPoco.Core.Util
 {
     /// <summary>
-    /// Resolve JSON schema $ref attributes
+    ///     Resolve JSON schema $ref attributes
     /// </summary>
     public class JsonSchemaResolverUtil
     {
         /// <summary>
-        /// Resolving schemas so that they can be parsed.
+        ///     The absolute path to the base generated directory.
         /// </summary>
-        private JsonSchemaResolver _resolver = new JsonSchemaResolver();
+        private readonly string _baseDir;
 
         /// <summary>
-        /// Keeps track of the found schemas.
+        ///     Whether or not to create directories.
         /// </summary>
-        private Dictionary<string, JsonSchemaWrapper> _schemas = new Dictionary<string, JsonSchemaWrapper>();
+        private readonly bool _createDirs;
 
         /// <summary>
-        /// The namespace.
+        ///     The namespace.
         /// </summary>
-        private string _ns;
+        private readonly string _ns;
 
         /// <summary>
-        /// Whether or not to create directories.
+        ///     Resolving schemas so that they can be parsed.
         /// </summary>
-        private bool _createDirs;
+        private readonly JsonSchemaResolver _resolver = new JsonSchemaResolver();
 
         /// <summary>
-        /// The absolute path to the base generated directory.
+        ///     Keeps track of the found schemas.
         /// </summary>
-        private string _baseDir;
+        private readonly Dictionary<string, JsonSchemaWrapper> _schemas = new Dictionary<string, JsonSchemaWrapper>();
 
         /// <summary>
-        /// Constructor.
+        ///     Constructor.
         /// </summary>
         /// <param name="ns">settings.Namespace</param>
         /// <param name="createDirs">settings.Verbose</param>
+        /// <param name="baseDir">The base directory of the generated files.</param>
         public JsonSchemaResolverUtil(string ns, bool createDirs, string baseDir)
         {
             _ns = ns;
@@ -54,9 +52,9 @@ namespace Cvent.SchemaToPoco.Core.Util
         }
 
         /// <summary>
-        /// Resolve all schemas.
+        ///     Resolve all schemas.
         /// </summary>
-        /// <param name="prevPath">Path to the current file.</param>
+        /// <param name="filePath">Path to the current file.</param>
         /// <param name="data">String data for the file.</param>
         /// <returns>A Dictionary containing all resolved schemas.</returns>
         public Dictionary<string, JsonSchemaWrapper> ResolveSchemas(string filePath, string data)
@@ -67,14 +65,14 @@ namespace Cvent.SchemaToPoco.Core.Util
         }
 
         /// <summary>
-        /// Recursively resolve all schemas.
+        ///     Recursively resolve all schemas.
         /// </summary>
-        /// <param name="prevPath">Path to the current file.</param>
+        /// <param name="filePath">Path to the current file.</param>
         /// <param name="data">String data for the file.</param>
         /// <returns>An extended wrapper for the JsonSchema.</returns>
         private JsonSchemaWrapper ResolveSchemaHelper(string filePath, string data)
         {
-            var definition = new { csharpType = string.Empty, csharpInterfaces = new string[] { } };
+            var definition = new {csharpType = string.Empty, csharpInterfaces = new string[] {}};
             var deserialized = JsonConvert.DeserializeAnonymousType(data, definition);
             var dependencies = new List<JsonSchemaWrapper>();
 
@@ -94,7 +92,9 @@ namespace Cvent.SchemaToPoco.Core.Util
                     }
                 }
                 else
+                {
                     schema = _schemas[currPath];
+                }
 
                 // Add schema to dependencies
                 dependencies.Add(schema);
@@ -103,9 +103,7 @@ namespace Cvent.SchemaToPoco.Core.Util
             // Set up schema and wrapper to return
             JsonSchema parsed = JsonSchema.Parse(data, _resolver);
             parsed.Id = Path.GetFileName(filePath);
-            JsonSchemaWrapper toReturn = new JsonSchemaWrapper(parsed);
-            toReturn.Namespace = _ns;
-            toReturn.Dependencies = dependencies;
+            var toReturn = new JsonSchemaWrapper(parsed) {Namespace = _ns, Dependencies = dependencies};
 
             // If csharpType is specified
             if (!String.IsNullOrEmpty(deserialized.csharpType))
@@ -118,11 +116,14 @@ namespace Cvent.SchemaToPoco.Core.Util
                 toReturn.Schema.Title = cType;
 
                 if (_createDirs)
-                   IOUtils.CreateDirectoryFromNamespace(_baseDir, toReturn.Namespace);
+                {
+                    IoUtils.CreateDirectoryFromNamespace(_baseDir, toReturn.Namespace);
+                }
             }
 
             // If csharpInterfaces is specified
             if (deserialized.csharpInterfaces != null)
+            {
                 foreach (string s in deserialized.csharpInterfaces)
                 {
                     // Try to resolve the type
@@ -131,12 +132,13 @@ namespace Cvent.SchemaToPoco.Core.Util
                     // If type cannot be found, create a new type
                     if (t == null)
                     {
-                        TypeBuilderHelper builder = new TypeBuilderHelper(toReturn.Namespace);
+                        var builder = new TypeBuilderHelper(toReturn.Namespace);
                         t = builder.GetCustomType(s, !s.Contains("."));
                     }
 
                     toReturn.Interfaces.Add(t);
                 }
+            }
 
             return toReturn;
         }

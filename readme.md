@@ -102,10 +102,10 @@ namespace generated
 * [.NET Framework 4.5](http://www.microsoft.com/en-us/download/details.aspx?id=30653) or later
 
 ### Instructions
-1. Build the solution in Visual Studio (Ctrl+Shift+B), or run `msbuild \Path\to\.sln`.
+1. [Download the latest executable](https://github.com/cvent/json-schema-2-poco/releases/latest), build the solution in Visual Studio (Ctrl+Shift+B), or run `msbuild \Path\to\.sln`.
 2. Run the following command:
 ```
-\Source\Cvent.SchemaToPoco.Console\bin\Debug\Cvent.SchemaToPoco.Console.exe -s \Location\To\Json\Schema
+Cvent.SchemaToPoco.Console.exe -s \Location\To\Json\Schema
 ```
 
 ### Optional Flags

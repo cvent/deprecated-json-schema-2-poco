@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.Text.RegularExpressions;
 using Cvent.SchemaToPoco.Core.Types;
 using Cvent.SchemaToPoco.Core.Util;
 using Microsoft.CSharp;
@@ -87,6 +88,12 @@ namespace Cvent.SchemaToPoco.Core
                 foreach (var i in _schemaDocument.Properties)
                 {
                     JsonSchema schema = i.Value;
+
+                    // Sanitize inputs
+                    if (!String.IsNullOrEmpty(schema.Description))
+                    {
+                        schema.Description = Regex.Unescape(schema.Description);
+                    }
 
                     // If it is an enum
                     if (schema.Enum != null)

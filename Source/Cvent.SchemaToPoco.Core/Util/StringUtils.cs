@@ -1,5 +1,9 @@
 ﻿using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.IO;
+using System.Media;
+using System.Text.RegularExpressions;
 
 namespace Cvent.SchemaToPoco.Core.Util
 {
@@ -8,6 +12,16 @@ namespace Cvent.SchemaToPoco.Core.Util
     /// </summary>
     public static class StringUtils
     {
+        private static char[] _escapeChars = new[]
+        {
+            'w',
+            'W',
+            'd',
+            'D',
+            's',
+            'S'
+        };
+
         /// <summary>
         ///     Capitalize the first letter in a string.
         /// </summary>
@@ -63,10 +77,9 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// <param name="s">The regex.</param>
         /// <param name="literal">Whether or not to sanitize for use as a string literal.</param>
         /// <returns>A sanitized regular expression</returns>
-        /// TODO
         public static string SanitizeRegex(string s, bool literal)
         {
-            return s;
+            return literal ? ToLiteral(s, true).Replace("\"", "\"\"") : Regex.Escape(s);
         }
 
         /// <summary>
@@ -84,6 +97,38 @@ namespace Cvent.SchemaToPoco.Core.Util
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        ///     Convert a string to a literal string.
+        /// </summary>
+        /// <param name="input">The string.</param>
+        /// <param name="preserveEscapes">Whether or not to preserve regex escape sequences.</param>
+        /// <returns>An escaped string.</returns>
+        public static string ToLiteral(string input, bool preserveEscapes)
+        {
+            using (var writer = new StringWriter())
+            {
+                using (var provider = CodeDomProvider.CreateProvider("CSharp"))
+                {
+                    provider.GenerateCodeFromExpression(new CodePrimitiveExpression(input), writer, null);
+                    string s = writer.ToString();
+
+                    // Remove quotes from beginning and end
+                    s = s.TrimStart(new[] { '"' }).TrimEnd(new[] { '"' });
+
+                    // Preserve escape sequences
+                    if (preserveEscapes)
+                    {
+                        foreach (char c in _escapeChars)
+                        {
+                            s = s.Replace(@"\\" + c, @"\" + c);
+                        }
+                    }
+
+                    return s;
+                }
+            }
         }
     }
 }

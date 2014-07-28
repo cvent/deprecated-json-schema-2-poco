@@ -8,6 +8,7 @@ namespace generated
 
         [Required]
         [MinLength(2)]
+        [RegularExpression(@"^\\\""dev\""\'[a-c]\t$")]
         public virtual string Foo
         {
             get { return _foo; }

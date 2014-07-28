@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Schema;
+﻿using System;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Schema;
 
 namespace Test
 {
@@ -6,14 +8,11 @@ namespace Test
     {
         private static void Main(string[] args)
         {
-            string schemaJson = @"{
-              '$id' : 'http://jsonschema.net/examples/',
-              'properties': {
-                'A': {'$ref':'#B.json'}
-              }
-            }";
-
-            JsonSchema parsed = JsonSchema.Parse(schemaJson);
+            Regex r = new Regex(@"^\\\""dev\""\'[a-c]\s$");
+            string text = @"\""dev""'a ";
+            MatchCollection col = r.Matches(text);
+            Console.WriteLine(text);
+            Console.WriteLine("{0} matches found", col.Count);
         }
     }
 }

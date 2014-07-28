@@ -21,11 +21,13 @@ namespace Cvent.SchemaToPoco.Core.Types
         /// <param name="schema">The JsonSchema.</param>
         public void Populate(JsonSchema schema)
         {
+            // Add description
             if (schema.Description != null)
             {
                 AddComment(schema.Description);
             }
 
+            // Add required attribute
             if (schema.Required != null && schema.Required.Value)
             {
                 AddAttribute("Required");
@@ -85,7 +87,8 @@ namespace Cvent.SchemaToPoco.Core.Types
                 if (!String.IsNullOrEmpty(schema.Pattern))
                 {
                     AddAttribute("RegularExpression",
-                        new CodeAttributeArgument(new CodeSnippetExpression(string.Format("@\"{0}\"", schema.Pattern))));
+                        new CodeAttributeArgument(new CodeSnippetExpression(string.Format(@"@""{0}""",
+                            StringUtils.SanitizeRegex(schema.Pattern, true)))));
                 }
             }
 

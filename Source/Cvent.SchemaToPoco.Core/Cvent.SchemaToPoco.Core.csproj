@@ -60,6 +60,7 @@
     <Compile Include="Util\JsonSchemaResolverUtil.cs" />
     <Compile Include="Util\JsonSchemaUtils.cs" />
     <Compile Include="Util\StringUtils.cs" />
+    <Compile Include="Util\TypeUtils.cs" />
     <Compile Include="ValidationAttributes\MaxValueAttribute.cs" />
     <Compile Include="ValidationAttributes\MinValueAttribute.cs" />
   </ItemGroup>

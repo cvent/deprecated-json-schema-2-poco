@@ -37,8 +37,10 @@ namespace Cvent.SchemaToPoco.Core.Types
         /// <param name="property">The property name.</param>
         /// <param name="type">The type of the property.</param>
         /// <param name="value">The value to initialize with.</param>
+        /// TODO
         public void AddDefault(string property, CodeTypeReference type, object value)
         {
+            //value.GetType()
             var reference = new CodeFieldReferenceExpression(null, property);
             Constructor.Statements.Add(new CodeAssignStatement(reference, new CodePrimitiveExpression(value)));
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -68,27 +69,8 @@ namespace Cvent.SchemaToPoco.Console
                 // Load schemas given a json file or directory
                 LoadSchemas(_settings.Schema);
 
-                foreach (JsonSchemaWrapper s in _schemas.Values)
-                {
-                    if (s.ToCreate)
-                    {
-                        var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(s, s.Namespace);
-                        CodeCompileUnit codeUnit = jsonSchemaToCodeUnit.Execute();
-                        var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
-
-                        if (_settings.Verbose)
-                        {
-                            System.Console.WriteLine(csharpGenerator.Execute());
-                        }
-                        else
-                        {
-                            string saveLoc = _baseDir + @"\" + s.Namespace.Replace('.', '\\') + @"\" + s.Schema.Title +
-                                             ".cs";
-                            IoUtils.GenerateFile(csharpGenerator.Execute(), saveLoc);
-                            System.Console.WriteLine("Wrote " + saveLoc);
-                        }
-                    }
-                }
+                // Generate code
+                Generate();
 
                 return (int) ExitCodes.Ok;
             }
@@ -154,6 +136,34 @@ namespace Cvent.SchemaToPoco.Console
             {
                 var resolver = new JsonSchemaResolverUtil(_settings.Namespace, !_settings.Verbose, _baseDir);
                 _schemas = resolver.ResolveSchemas(file, reader.ReadToEnd());
+            }
+        }
+
+        /// <summary>
+        ///     Generate C# code.
+        /// </summary>
+        private static void Generate()
+        {
+            foreach (JsonSchemaWrapper s in _schemas.Values)
+            {
+                if (s.ToCreate)
+                {
+                    var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(s, s.Namespace);
+                    CodeCompileUnit codeUnit = jsonSchemaToCodeUnit.Execute();
+                    var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
+
+                    if (_settings.Verbose)
+                    {
+                        System.Console.WriteLine(csharpGenerator.Execute());
+                    }
+                    else
+                    {
+                        string saveLoc = _baseDir + @"\" + s.Namespace.Replace('.', '\\') + @"\" + s.Schema.Title +
+                                         ".cs";
+                        IoUtils.GenerateFile(csharpGenerator.Execute(), saveLoc);
+                        System.Console.WriteLine("Wrote " + saveLoc);
+                    }
+                }
             }
         }
     }

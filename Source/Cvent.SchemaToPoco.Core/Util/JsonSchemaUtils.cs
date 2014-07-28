@@ -25,18 +25,6 @@ namespace Cvent.SchemaToPoco.Core.Util
         private const string DEFAULT_TYPE = "System.Object";
 
         /// <summary>
-        ///     What primitive objects map to in C#.
-        /// </summary>
-        private static readonly Dictionary<string, string> Primitives = new Dictionary<string, string>
-        {
-            {"String", "System.String"},
-            {"Float", "System.Single"},
-            {"Integer", "System.Int32"},
-            {"Boolean", "System.Boolean"},
-            {"Object", "System.Object"}
-        };
-
-        /// <summary>
         ///     Check if the schema is an integer type.
         /// </summary>
         /// <param name="schema">The JSON shema.</param>
@@ -103,7 +91,7 @@ namespace Cvent.SchemaToPoco.Core.Util
                 }
                 if (schema.Type != null)
                 {
-                    toRet = GetPrimitiveType(schema.Type);
+                    toRet = TypeUtils.GetPrimitiveTypeAsString(schema.Type);
                 }
             }
             else
@@ -123,24 +111,12 @@ namespace Cvent.SchemaToPoco.Core.Util
                         // Set the type to the type of the items
                     if (schema.Items[0].Type != null)
                     {
-                        toRet = GetPrimitiveType(schema.Items[0].Type);
+                        toRet = TypeUtils.GetPrimitiveTypeAsString(schema.Items[0].Type);
                     }
                 }
             }
 
             return Type.GetType(toRet, true);
-        }
-
-        /// <summary>
-        ///     Get the primitive name of a type if it exists.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>The primitive type, if it exists.</returns>
-        private static string GetPrimitiveType(JsonSchemaType? type)
-        {
-            string sType = type.ToString();
-
-            return Primitives.ContainsKey(sType) ? Primitives[sType] : sType;
         }
     }
 }

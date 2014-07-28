@@ -211,15 +211,5 @@ namespace Cvent.SchemaToPoco.Core
 
             return property;
         }
-
-        /// <summary>
-        ///     Check if a type is a primitive, or can be treated like one (ie. lowercased type).
-        /// </summary>
-        /// <param name="t">The type.</param>
-        /// <returns>Whether or not it is a primitive type.</returns>
-        private static bool IsPrimitive(Type t)
-        {
-            return t.IsPrimitive || t == typeof (Decimal) || t == typeof (String) || t == typeof (Object);
-        }
     }
 }

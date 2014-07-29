@@ -27,7 +27,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// </summary>
         /// <param name="t">The type.</param>
         /// <returns>Whether or not it is a primitive type.</returns>
-        private static bool IsPrimitive(Type t)
+        public static bool IsPrimitive(Type t)
         {
             return t.IsPrimitive || t == typeof(Decimal) || t == typeof(String) || t == typeof(Object);
         }
@@ -52,7 +52,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         public static string GetPrimitiveType(Type type)
         {
             string sType = type.ToString();
-            Console.WriteLine(sType);
+            System.Console.WriteLine(sType);
 
             return Primitives.ContainsKey(sType) ? Primitives[sType] : sType;
         }

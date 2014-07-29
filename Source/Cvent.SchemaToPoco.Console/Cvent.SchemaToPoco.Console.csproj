@@ -69,7 +69,7 @@
     <Compile Include="CommandLineSettings.cs" />
     <Compile Include="ExitCodes.cs" />
     <Compile Include="Mono.Options\Options.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="JsonSchemaToPocoCLExecutor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

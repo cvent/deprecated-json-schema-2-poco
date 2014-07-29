@@ -45,13 +45,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NamespaceTests.cs" />
+    <Compile Include="FunctionalTests\PropertyTest.cs" />
+    <Compile Include="FunctionalTests\TypeTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestVars.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Cvent.SchemaToPoco.Console\Cvent.SchemaToPoco.Console.csproj">
+      <Project>{3aeffcc7-e21d-4699-b40e-09cb2965f328}</Project>
+      <Name>Cvent.SchemaToPoco.Console</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Cvent.SchemaToPoco.Core\Cvent.SchemaToPoco.Core.csproj">
       <Project>{B504BB29-7224-4F82-80ED-BDB344ACABEF}</Project>
       <Name>Cvent.SchemaToPoco.Core</Name>

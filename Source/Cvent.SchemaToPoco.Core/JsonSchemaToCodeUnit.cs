@@ -144,7 +144,7 @@ namespace Cvent.SchemaToPoco.Core
                             Attributes = MemberAttributes.Public,
                             Name = "_" + i.Key,
                             Type =
-                                IsPrimitive(type) && !JsonSchemaUtils.IsArray(schema)
+                                TypeUtils.IsPrimitive(type) && !JsonSchemaUtils.IsArray(schema)
                                     ? new CodeTypeReference(type)
                                     : new CodeTypeReference(strType)
                         };

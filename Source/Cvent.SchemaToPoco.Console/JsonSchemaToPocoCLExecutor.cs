@@ -1,0 +1,95 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using Cvent.SchemaToPoco.Core;
+using NDesk.Options;
+
+namespace Cvent.SchemaToPoco.Console
+{
+    /// <summary>
+    ///     Main executor class for the CLI.
+    /// </summary>
+    public class JsonSchemaToPocoCLExecutor
+    {
+        /// <summary>
+        ///     Main controller.
+        /// </summary>
+        private readonly JsonSchemaToPoco _controller;
+
+        /// <summary>
+        ///     Arguments from command line, raw format.
+        /// </summary>
+        private OptionSet _options;
+
+        /// <summary>
+        ///     Arguments from command line.
+        /// </summary>
+        private readonly CommandLineSettings _settings;
+
+        /// <summary>
+        ///     Constructor taking in command line arguments.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
+        public JsonSchemaToPocoCLExecutor(IEnumerable<string> args)
+        {
+            _settings = ConfigureCommandLineOptions(args);
+            _controller = new JsonSchemaToPoco(_settings.Schema, _settings.Namespace, _settings.OutputFiledir, _settings.Verbose);
+        }
+
+        /// <summary>
+        ///     Configure command line options.
+        /// </summary>
+        /// <param name="arguements">Arguments from the command line.</param>
+        /// <returns>The command line options.</returns>
+        private CommandLineSettings ConfigureCommandLineOptions(IEnumerable<string> arguements)
+        {
+            var settings = new CommandLineSettings();
+
+            _options = new OptionSet
+            {
+                {"n=|namespace=", "Namespace contaning all of the generated classes", ns => settings.Namespace = ns},
+                {"s=|schema=", "File path to the schema file", s => settings.Schema = s},
+                {"o=|output=", "Directory to save files", fn => settings.OutputFiledir = fn},
+                {
+                    "v|verbose", "Print out files in console without generating",
+                    v => settings.Verbose = !string.IsNullOrWhiteSpace(v)
+                },
+                {"?|help", "Show this help message", h => settings.ShowHelp = !string.IsNullOrWhiteSpace(h)}
+            };
+
+            _options.Parse(arguements);
+
+            return settings;
+        }
+
+        /// <summary>
+        ///     Main executor method.
+        /// </summary>
+        /// <returns>Status code.</returns>
+        private int Execute()
+        {
+            if (_settings.ShowHelp)
+            {
+                var description =
+                    new StringBuilder("JSON schema to POCO\nhttps://github.com/cvent/json-schema-2-poco\n\n");
+                _options.WriteOptionDescriptions(new StringWriter(description));
+                System.Console.WriteLine(description.ToString());
+
+                return (int)ExitCodes.Ok;
+            }
+
+            return _controller.Execute();
+        }
+
+        /// <summary>
+        ///     Main method.
+        /// </summary>
+        /// <param name="args">Arguments from command line.</param>
+        /// <returns>An exit code.</returns>
+        public static Int32 Main(string[] args)
+        {
+            return new JsonSchemaToPocoCLExecutor(args).Execute();
+        }
+    }
+}

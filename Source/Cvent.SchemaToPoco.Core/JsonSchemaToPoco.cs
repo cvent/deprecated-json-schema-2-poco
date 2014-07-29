@@ -1,10 +1,7 @@
 ﻿using System;
 using System.CodeDom;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
 using Cvent.SchemaToPoco.Console;
 using Cvent.SchemaToPoco.Core.CodeToLanguage;
 using Cvent.SchemaToPoco.Core.Types;
@@ -57,7 +54,7 @@ namespace Cvent.SchemaToPoco.Core
         /// <param name="ns">Namespace to set the schema file.</param>
         /// <param name="outputDirectory">Base directory to save the generated files.</param>
         /// <param name="verbose">Whether or not to save the files or print them out.</param>
-        public JsonSchemaToPoco(string schemaFileLocation, string ns, string outputDirectory, bool verbose)
+        public JsonSchemaToPoco(string schemaFileLocation, string ns = "generated", string outputDirectory = "", bool verbose = false)
         {
             _schemaLocation = schemaFileLocation;
             _nsName = ns;
@@ -75,14 +72,11 @@ namespace Cvent.SchemaToPoco.Core
             {
                 ConfigureLogging();
 
-                // Create directory to generate files
-                IoUtils.CreateDirectoryFromNamespace(_baseDir, _nsName);
-
                 // Load schemas given a json file or directory
-                LoadSchemas(_schemaLocation);
+                LoadSchemas();
 
                 // Generate code
-                Generate(_verbose);
+                Generate();
 
                 return (int)ExitCodes.Ok;
             }
@@ -114,28 +108,31 @@ namespace Cvent.SchemaToPoco.Core
         /// <summary>
         ///     Load all the schemas from a file.
         /// </summary>
-        /// <param name="file">File path.</param>
-        private void LoadSchemas(string file)
+        private void LoadSchemas()
         {
-            using (TextReader reader = File.OpenText(file))
+            using (TextReader reader = File.OpenText(_schemaLocation))
             {
                 var resolver = new JsonSchemaResolverUtil(_nsName, !_verbose, _baseDir);
-                _schemas = resolver.ResolveSchemas(file, reader.ReadToEnd());
+                _schemas = resolver.ResolveSchemas(_schemaLocation, reader.ReadToEnd());
             }
         }
 
         /// <summary>
         ///     Generate C# code.
         /// </summary>
-        /// <param name="verbose">Returns the files as a string without saving it, if true.</param>
-        /// <returns>A mapping of all the JSON schemas and the generated code.</returns>
-        private Dictionary<JsonSchemaWrapper, string> Generate(bool verbose)
+        private void Generate()
         {
             var generatedCode = GenerateHelper();
 
+            // Create directory to generate files
+            if (!_verbose)
+            {
+                IoUtils.CreateDirectoryFromNamespace(_baseDir, _nsName);
+            }
+
             foreach (var entry in generatedCode)
             {
-                if (!verbose)
+                if (!_verbose)
                 {
                     string saveLoc = _baseDir + @"\" + entry.Key.Namespace.Replace('.', '\\') + @"\" + entry.Key.Schema.Title +
                                      ".cs";
@@ -147,8 +144,6 @@ namespace Cvent.SchemaToPoco.Core
                     System.Console.WriteLine(entry.Value);
                 }
             }
-
-            return generatedCode;
         }
 
         private Dictionary<JsonSchemaWrapper, string> GenerateHelper()
@@ -168,6 +163,31 @@ namespace Cvent.SchemaToPoco.Core
             }
 
             return generatedCode;
+        }
+
+        /// <summary>
+        ///     Static method to return a Dictionary of JsonSchemaWrapper and its corresponding C# generated code.
+        /// </summary>
+        /// <param name="schemaLoc">Location of JSON schema.</param>
+        /// <returns>A mapping of all the JSON schemas and the generated code.</returns>
+        public static Dictionary<JsonSchemaWrapper, string> GenerateFromFile(string schemaLoc)
+        {
+            var controller = new JsonSchemaToPoco(schemaLoc);
+            controller.LoadSchemas();
+            return controller.GenerateHelper();
+        }
+
+        /// <summary>
+        ///     Static method to return generated code for a single JSON schema with no references.
+        /// </summary>
+        /// <param name="schema">JSON schema as a string.</param>
+        /// <returns>The generated code.</returns>
+        public static string Generate(string schema)
+        {
+            var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(JsonSchemaResolverUtil.ConvertToWrapper(schema), "generated");
+            CodeCompileUnit codeUnit = jsonSchemaToCodeUnit.Execute();
+            var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
+            return csharpGenerator.Execute();
         }
     }
 }

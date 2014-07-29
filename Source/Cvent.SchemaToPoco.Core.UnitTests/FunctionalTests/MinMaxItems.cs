@@ -3,7 +3,7 @@
 namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
 {
     [TestFixture]
-    public class PropertyTest : BaseTest
+    public class MinMaxItems : BaseTest
     {
         [Test]
         public void TestBasic()
@@ -12,21 +12,30 @@ namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
     'type' : 'object',
     'properties' : {
         'foo' : {
-            'type' : 'string'
+            'type' : 'array',
+            'items' : {
+                'type' : 'string'
+            },
+            'minItems' : 10,
+            'maxItems' : 20
         }
     }
 }";
             const string correctResult = @"namespace generated
 {
     using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
 
 
     public class DefaultClassName
     {
 
-        public string _foo;
+        public List<string> _foo;
 
-        public virtual string Foo
+        [MinLength(10)]
+        [MaxLength(20)]
+        public virtual List<string> Foo
         {
             get
             {

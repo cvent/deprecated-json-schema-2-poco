@@ -3,7 +3,7 @@
 namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
 {
     [TestFixture]
-    public class PropertyTest : BaseTest
+    public class EnumTest : BaseTest
     {
         [Test]
         public void TestBasic()
@@ -12,7 +12,8 @@ namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
     'type' : 'object',
     'properties' : {
         'foo' : {
-            'type' : 'string'
+            'type' : 'object',
+            'enum' : ['one', '2two2', 'Three_ _third_']
         }
     }
 }";
@@ -21,22 +22,18 @@ namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
     using System;
 
 
-    public class DefaultClassName
+    public enum Foo
     {
 
-        public string _foo;
+        One,
 
-        public virtual string Foo
-        {
-            get
-            {
-                return _foo;
-            }
-            set
-            {
-                _foo = value;
-            }
-        }
+        _2two2,
+
+        Three__third_,
+    }
+
+    public class DefaultClassName
+    {
     }
 }";
 

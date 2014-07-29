@@ -142,5 +142,14 @@ namespace Cvent.SchemaToPoco.Core.Util
 
             return toReturn;
         }
+
+        /// <summary>
+        ///     Convert a schema with no references to a JsonSchemaWrapper.
+        /// </summary>
+        /// <param name="data">The JSON schema.</param>
+        public static JsonSchemaWrapper ConvertToWrapper(string data)
+        {
+            return new JsonSchemaWrapper(JsonSchema.Parse(data));
+        }
     }
 }

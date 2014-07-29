@@ -45,9 +45,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FunctionalTests\BaseTest.cs" />
+    <Compile Include="FunctionalTests\DefaultTest.cs" />
+    <Compile Include="FunctionalTests\DescriptionTest.cs" />
+    <Compile Include="FunctionalTests\EnumTest.cs" />
+    <Compile Include="FunctionalTests\ExclusiveMinMaxTest.cs" />
+    <Compile Include="FunctionalTests\ItemTest.cs" />
+    <Compile Include="FunctionalTests\MinMaxItems.cs" />
+    <Compile Include="FunctionalTests\MinMaxLengthTest.cs" />
+    <Compile Include="FunctionalTests\MinMaxTest.cs" />
+    <Compile Include="FunctionalTests\PatternTest.cs" />
     <Compile Include="FunctionalTests\PropertyTest.cs" />
+    <Compile Include="FunctionalTests\RequiredTest.cs" />
+    <Compile Include="FunctionalTests\TitleTest.cs" />
     <Compile Include="FunctionalTests\TypeTest.cs" />
+    <Compile Include="FunctionalTests\UniqueItemsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

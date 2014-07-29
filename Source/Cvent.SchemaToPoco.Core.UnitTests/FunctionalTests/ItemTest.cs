@@ -3,7 +3,7 @@
 namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
 {
     [TestFixture]
-    public class PropertyTest : BaseTest
+    public class ItemTest : BaseTest
     {
         [Test]
         public void TestBasic()
@@ -12,21 +12,24 @@ namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
     'type' : 'object',
     'properties' : {
         'foo' : {
-            'type' : 'string'
+            'type' : 'array',
+            'items' : {
+                'type' : 'string'
+            }
         }
     }
 }";
             const string correctResult = @"namespace generated
 {
     using System;
-
+    using System.Collections.Generic;
 
     public class DefaultClassName
     {
 
-        public string _foo;
+        public List<string> _foo;
 
-        public virtual string Foo
+        public virtual List<string> Foo
         {
             get
             {

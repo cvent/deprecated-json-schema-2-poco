@@ -11,10 +11,6 @@ namespace Cvent.SchemaToPoco.Core.Types
             : base(cl)
         {
             Property.IsClass = true;
-
-            // Create constructor
-            Constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
-            cl.Members.Add(Constructor);
         }
 
         /// <summary>
@@ -40,6 +36,13 @@ namespace Cvent.SchemaToPoco.Core.Types
         /// TODO
         public void AddDefault(string property, CodeTypeReference type, object value)
         {
+            // Create constructor if doesn't already exist
+            if (Constructor == null)
+            {
+                Constructor = new CodeConstructor {Attributes = MemberAttributes.Public};
+                Property.Members.Add(Constructor);
+            }
+
             //value.GetType()
             var reference = new CodeFieldReferenceExpression(null, property);
             Constructor.Statements.Add(new CodeAssignStatement(reference, new CodePrimitiveExpression(value)));

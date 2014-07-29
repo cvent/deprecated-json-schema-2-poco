@@ -74,6 +74,9 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console.exe" "C:\Users\SLiu\Projects\json-schema-2-poco\Source\Cvent.SchemaToPoco.Core.UnitTests\bin\Debug\Cvent.SchemaToPoco.Core.UnitTests.dll"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

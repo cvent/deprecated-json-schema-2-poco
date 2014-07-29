@@ -3,7 +3,7 @@
 namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
 {
     [TestFixture]
-    public class PropertyTest : BaseTest
+    public class PatternTest : BaseTest
     {
         [Test]
         public void TestBasic()
@@ -12,20 +12,26 @@ namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
     'type' : 'object',
     'properties' : {
         'foo' : {
-            'type' : 'string'
+            'type' : 'string',
+            'description' : 'Match the regex \\\""dev\""\'[a-c] ',
+            'pattern' : '^\\\""dev\""\'[a-c]\\s$'
         }
     }
 }";
             const string correctResult = @"namespace generated
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
 
 
     public class DefaultClassName
     {
 
+        // Match the regex ""dev""'[a-c]
         public string _foo;
 
+        // Match the regex ""dev""'[a-c]
+        [RegularExpression(@""^\\\""""dev\""""\'[a-c]\s$"")]
         public virtual string Foo
         {
             get

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.CodeDom;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using Cvent.SchemaToPoco.Console;
 using Cvent.SchemaToPoco.Core.CodeToLanguage;
@@ -80,7 +82,7 @@ namespace Cvent.SchemaToPoco.Core
                 LoadSchemas(_schemaLocation);
 
                 // Generate code
-                Generate();
+                Generate(_verbose);
 
                 return (int)ExitCodes.Ok;
             }
@@ -125,8 +127,34 @@ namespace Cvent.SchemaToPoco.Core
         /// <summary>
         ///     Generate C# code.
         /// </summary>
-        private void Generate()
+        /// <param name="verbose">Returns the files as a string without saving it, if true.</param>
+        /// <returns>A mapping of all the JSON schemas and the generated code.</returns>
+        private Dictionary<JsonSchemaWrapper, string> Generate(bool verbose)
         {
+            var generatedCode = GenerateHelper();
+
+            foreach (var entry in generatedCode)
+            {
+                if (!verbose)
+                {
+                    string saveLoc = _baseDir + @"\" + entry.Key.Namespace.Replace('.', '\\') + @"\" + entry.Key.Schema.Title +
+                                     ".cs";
+                    IoUtils.GenerateFile(entry.Value, saveLoc);
+                    System.Console.WriteLine("Wrote " + saveLoc);
+                }
+                else
+                {
+                    System.Console.WriteLine(entry.Value);
+                }
+            }
+
+            return generatedCode;
+        }
+
+        private Dictionary<JsonSchemaWrapper, string> GenerateHelper()
+        {
+            var generatedCode = new Dictionary<JsonSchemaWrapper, string>();
+
             foreach (JsonSchemaWrapper s in _schemas.Values)
             {
                 if (s.ToCreate)
@@ -135,19 +163,11 @@ namespace Cvent.SchemaToPoco.Core
                     CodeCompileUnit codeUnit = jsonSchemaToCodeUnit.Execute();
                     var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
 
-                    if (_verbose)
-                    {
-                        System.Console.WriteLine(csharpGenerator.Execute());
-                    }
-                    else
-                    {
-                        string saveLoc = _baseDir + @"\" + s.Namespace.Replace('.', '\\') + @"\" + s.Schema.Title +
-                                         ".cs";
-                        IoUtils.GenerateFile(csharpGenerator.Execute(), saveLoc);
-                        System.Console.WriteLine("Wrote " + saveLoc);
-                    }
+                    generatedCode.Add(s, csharpGenerator.Execute());
                 }
             }
+
+            return generatedCode;
         }
     }
 }

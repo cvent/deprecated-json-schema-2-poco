@@ -29,7 +29,7 @@ namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
     public class DefaultClassName
     {
 
-        public HashSet<string> _foo;
+        private HashSet<string> _foo;
 
         public virtual HashSet<string> Foo
         {

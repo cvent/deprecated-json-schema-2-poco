@@ -141,7 +141,7 @@ namespace Cvent.SchemaToPoco.Core
 
                         var field = new CodeMemberField
                         {
-                            Attributes = MemberAttributes.Public,
+                            Attributes = MemberAttributes.Private,
                             Name = "_" + i.Key,
                             Type =
                                 TypeUtils.IsPrimitive(type) && !JsonSchemaUtils.IsArray(schema)
@@ -168,7 +168,7 @@ namespace Cvent.SchemaToPoco.Core
                         // Add default, if any
                         if (schema.Default != null)
                         {
-                            clWrap.AddDefault(field.Name, field.Type, schema.Default.ToObject(typeof (object)));
+                            clWrap.AddDefault(field.Name, field.Type, schema.Default.ToString());
                         }
 
                         clWrap.Property.Members.Add(property);

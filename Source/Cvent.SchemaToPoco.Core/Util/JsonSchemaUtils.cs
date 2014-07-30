@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Cvent.SchemaToPoco.Core.Types;
 using Newtonsoft.Json.Schema;
 
@@ -101,7 +100,7 @@ namespace Cvent.SchemaToPoco.Core.Util
                 {
                     return builder.GetCustomType(schema.Title, true);
                 }
-                if (schema.Items.Count > 0)
+                if (schema.Items != null && schema.Items.Count > 0)
                 {
                     // Set the type to the title of the items
                     if (schema.Items[0].Title != null)

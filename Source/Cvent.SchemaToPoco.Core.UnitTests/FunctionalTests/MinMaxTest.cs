@@ -27,7 +27,7 @@ namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
     public class DefaultClassName
     {
 
-        public int _foo;
+        private int _foo;
 
         [MinValue(10)]
         [MaxValue(15)]

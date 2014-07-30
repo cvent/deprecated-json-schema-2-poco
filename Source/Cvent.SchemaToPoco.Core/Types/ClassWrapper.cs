@@ -33,8 +33,7 @@ namespace Cvent.SchemaToPoco.Core.Types
         /// <param name="property">The property name.</param>
         /// <param name="type">The type of the property.</param>
         /// <param name="value">The value to initialize with.</param>
-        /// TODO
-        public void AddDefault(string property, CodeTypeReference type, object value)
+        public void AddDefault(string property, CodeTypeReference type, string value)
         {
             // Create constructor if doesn't already exist
             if (Constructor == null)
@@ -43,9 +42,32 @@ namespace Cvent.SchemaToPoco.Core.Types
                 Property.Members.Add(Constructor);
             }
 
-            //value.GetType()
             var reference = new CodeFieldReferenceExpression(null, property);
-            Constructor.Statements.Add(new CodeAssignStatement(reference, new CodePrimitiveExpression(value)));
+            CodeExpression exp;
+            int n;
+            double m;
+
+            // Check for int
+            if (int.TryParse(value, out n))
+            {
+                exp = new CodePrimitiveExpression(n);
+            }
+            // Check for double
+            else if (double.TryParse(value, out m))
+            {
+                exp = new CodePrimitiveExpression(m);
+            }
+            // Check for {}
+            else if (value.Equals("{}"))
+            {
+                exp = new CodeObjectCreateExpression(type);
+            }
+            else
+            {
+                exp = new CodePrimitiveExpression(value);
+            }
+
+            Constructor.Statements.Add(new CodeAssignStatement(reference, exp));
         }
     }
 }

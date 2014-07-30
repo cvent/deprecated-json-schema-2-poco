@@ -28,7 +28,7 @@ namespace Cvent.SchemaToPoco.Core.UnitTests.FunctionalTests
     {
 
         // Match the regex ""dev""'[a-c]
-        public string _foo;
+        private string _foo;
 
         // Match the regex ""dev""'[a-c]
         [RegularExpression(@""^\\\""""dev\""""\'[a-c]\s$"")]

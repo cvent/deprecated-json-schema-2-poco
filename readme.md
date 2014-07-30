@@ -123,7 +123,7 @@ Prints out generated code without generating files
 
 ## Usage (Library)
 
-[Download the latest DLL](), and add it to your project as a reference.
+[Download the latest DLL](https://github.com/cvent/json-schema-2-poco/releases), and add it to your project as a reference.
 
 **Basic Usage**
 

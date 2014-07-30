@@ -153,7 +153,6 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// <returns>The string contents of that path.</returns>
         private string ReadFromPath(Uri path)
         {
-            //System.Console.WriteLine("trying to read from " + path);
             // file://, relative, and absolute paths
             if(path.IsFile)
             {

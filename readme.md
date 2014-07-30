@@ -125,7 +125,7 @@ Prints out generated code without generating files
 
 [Download the latest DLL](https://github.com/cvent/json-schema-2-poco/releases), and add it to your project as a reference.
 
-**Basic Usage**
+### Basic Usage
 
 ```csharp
 // To generate files:

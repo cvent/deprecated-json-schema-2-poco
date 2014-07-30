@@ -45,7 +45,7 @@ namespace Cvent.SchemaToPoco.Core
         /// <summary>
         ///     Keeps track of the found schemas.
         /// </summary>
-        private Dictionary<string, JsonSchemaWrapper> _schemas = new Dictionary<string, JsonSchemaWrapper>();
+        private Dictionary<Uri, JsonSchemaWrapper> _schemas = new Dictionary<Uri, JsonSchemaWrapper>();
 
         /// <summary>
         ///     Initialize settings.
@@ -110,11 +110,8 @@ namespace Cvent.SchemaToPoco.Core
         /// </summary>
         private void LoadSchemas()
         {
-            using (TextReader reader = File.OpenText(_schemaLocation))
-            {
-                var resolver = new JsonSchemaResolverUtil(_nsName, !_verbose, _baseDir);
-                _schemas = resolver.ResolveSchemas(_schemaLocation, reader.ReadToEnd());
-            }
+            var resolver = new JsonSchemaResolverUtil(_nsName, !_verbose, _baseDir);
+            _schemas = resolver.ResolveSchemas(_schemaLocation);
         }
 
         /// <summary>

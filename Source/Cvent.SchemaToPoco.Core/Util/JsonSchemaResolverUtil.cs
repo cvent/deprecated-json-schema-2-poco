@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text.RegularExpressions;
 using Cvent.SchemaToPoco.Core.Types;
 using Newtonsoft.Json;
@@ -36,7 +37,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// <summary>
         ///     Keeps track of the found schemas.
         /// </summary>
-        private readonly Dictionary<string, JsonSchemaWrapper> _schemas = new Dictionary<string, JsonSchemaWrapper>();
+        private readonly Dictionary<Uri, JsonSchemaWrapper> _schemas = new Dictionary<Uri, JsonSchemaWrapper>();
 
         /// <summary>
         ///     Constructor.
@@ -55,23 +56,26 @@ namespace Cvent.SchemaToPoco.Core.Util
         ///     Resolve all schemas.
         /// </summary>
         /// <param name="filePath">Path to the current file.</param>
-        /// <param name="data">String data for the file.</param>
         /// <returns>A Dictionary containing all resolved schemas.</returns>
-        public Dictionary<string, JsonSchemaWrapper> ResolveSchemas(string filePath, string data)
+        public Dictionary<Uri, JsonSchemaWrapper> ResolveSchemas(string filePath)
         {
-            JsonSchemaWrapper schema = ResolveSchemaHelper(filePath, data);
-            _schemas.Add(filePath, schema);
+            var uri = GetAbsoluteUri(new Uri(Directory.GetCurrentDirectory()), new Uri(filePath, UriKind.RelativeOrAbsolute), false);
+            JsonSchemaWrapper schema = ResolveSchemaHelper(uri, uri);
+            _schemas.Add(uri, schema);
             return _schemas;
         }
 
         /// <summary>
-        ///     Recursively resolve all schemas.
+        ///     Recursively resolve all schemas. All references to external schemas must have .json extension.
         /// </summary>
-        /// <param name="filePath">Path to the current file.</param>
-        /// <param name="data">String data for the file.</param>
+        /// <param name="parent">Path to the parent file.</param>
+        /// <param name="current">Path to the current file.</param>
         /// <returns>An extended wrapper for the JsonSchema.</returns>
-        private JsonSchemaWrapper ResolveSchemaHelper(string filePath, string data)
+        /// TODO check if parent is needed - right now it assumes parent for all children
+        private JsonSchemaWrapper ResolveSchemaHelper(Uri parent, Uri current)
         {
+            var uri = GetAbsoluteUri(parent, current, true);
+            var data = ReadFromPath(uri);
             var definition = new {csharpType = string.Empty, csharpInterfaces = new string[] {}};
             var deserialized = JsonConvert.DeserializeAnonymousType(data, definition);
             var dependencies = new List<JsonSchemaWrapper>();
@@ -79,21 +83,20 @@ namespace Cvent.SchemaToPoco.Core.Util
             MatchCollection matches = Regex.Matches(data, @"\""\$ref\""\s*:\s*\""(.*.json)\""");
             foreach (Match match in matches)
             {
-                // Get the full path to the file
-                string currPath = Path.GetDirectoryName(filePath) + @"\" + match.Groups[1].Value;
+                // Get the full path to the file, and change the reference to match
+                var currPath = new Uri(match.Groups[1].Value, UriKind.RelativeOrAbsolute);
+                var currUri = GetAbsoluteUri(parent, currPath, true);
+
                 JsonSchemaWrapper schema;
 
-                if (!_schemas.ContainsKey(currPath))
+                if (!_schemas.ContainsKey(currUri))
                 {
-                    using (TextReader reader2 = File.OpenText(currPath))
-                    {
-                        schema = ResolveSchemaHelper(currPath, reader2.ReadToEnd());
-                        _schemas.Add(currPath, schema);
-                    }
+                    schema = ResolveSchemaHelper(parent, currUri);
+                    _schemas.Add(currUri, schema);
                 }
                 else
                 {
-                    schema = _schemas[currPath];
+                    schema = _schemas[currUri];
                 }
 
                 // Add schema to dependencies
@@ -101,8 +104,8 @@ namespace Cvent.SchemaToPoco.Core.Util
             }
 
             // Set up schema and wrapper to return
-            JsonSchema parsed = JsonSchema.Parse(data, _resolver);
-            parsed.Id = Path.GetFileName(filePath);
+            JsonSchema parsed = JsonSchema.Parse(StandardizeReferences(parent, data), _resolver);
+            parsed.Id = uri.ToString();
             var toReturn = new JsonSchemaWrapper(parsed) {Namespace = _ns, Dependencies = dependencies};
 
             // If csharpType is specified
@@ -141,6 +144,82 @@ namespace Cvent.SchemaToPoco.Core.Util
             }
 
             return toReturn;
+        }
+
+        /// <summary>
+        ///     Read data from a Uri path.
+        /// </summary>
+        /// <param name="path">The path to read from.</param>
+        /// <returns>The string contents of that path.</returns>
+        private string ReadFromPath(Uri path)
+        {
+            //System.Console.WriteLine("trying to read from " + path);
+            // file://, relative, and absolute paths
+            if(path.IsFile)
+            {
+                return File.ReadAllText(path.AbsolutePath);
+            }
+
+            // http://, https://
+            if (path.ToString().StartsWith("http"))
+            {
+                using (var client = new WebClient())
+                {
+                    return client.DownloadString(path);
+                }
+            }
+
+            throw new ArgumentException("Cannot read from the path: " + path);
+        }
+
+        /// <summary>
+        ///     Get an absolute Uri given a relative Uri. If the relative Uri is absolute, then return that.
+        /// </summary>
+        /// <param name="baseUri">The base, or parent Uri.</param>
+        /// <param name="relativeUri">The relative Uri to combine.</param>
+        /// <param name="preserveSlashes">Leave the baseUri and relativeUri slashes untouched. If false, the relativeUri is guaranteed to be relative to the baseUri.</param>
+        /// <returns>An absolute Uri.</returns>
+        private Uri GetAbsoluteUri(Uri baseUri, Uri relativeUri, bool preserveSlashes)
+        {
+            if (relativeUri.IsAbsoluteUri)
+            {
+                return relativeUri;
+            }
+
+            if (!preserveSlashes)
+            {
+                if (!baseUri.ToString().EndsWith(@"\"))
+                {
+                    baseUri = new Uri(baseUri + @"\");
+                }
+            }
+
+            return new Uri(baseUri, relativeUri);
+        }
+
+        /// <summary>
+        ///     Convert all $ref attributes to absolute paths.
+        /// </summary>
+        /// <param name="parentUri">The parent Uri to resolve relative paths against.</param>
+        /// <param name="data">The JSON schema.</param>
+        /// <returns>The JSON schema with standardized $ref attributes.</returns>
+        private string StandardizeReferences(Uri parentUri, string data)
+        {
+            var lines = new List<string>(data.Split('\n'));
+            var pattern = new Regex(@"(\""\$ref\""\s*:\s*\"")(.*.json)(\"")");
+
+            for (int i = lines.Count - 1; i >= 0; i--)
+            {
+                if (pattern.IsMatch(lines[i]))
+                {
+                    var matched = pattern.Match(lines[i]);
+                    var matchedPath = matched.Groups[2].Value;
+                    var absPath = GetAbsoluteUri(parentUri, new Uri(matchedPath, UriKind.RelativeOrAbsolute), true);
+                    lines[i] = matched.Groups[1].Value + absPath + matched.Groups[3].Value + ",";
+                }
+            }
+
+            return string.Join("\n", lines);
         }
 
         /// <summary>

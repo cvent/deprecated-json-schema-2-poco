@@ -50,10 +50,6 @@ namespace generated
         // Information about a measure returned by a data-source
         public DataMeasure _measure;
 
-        public DataSet()
-        {
-        }
-
         // A result list for data sets
         public virtual List<DataResult> Results
         {

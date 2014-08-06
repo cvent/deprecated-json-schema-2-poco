@@ -106,6 +106,7 @@ namespace Cvent.SchemaToPoco.Core.Util
             // Set up schema and wrapper to return
             JsonSchema parsed = JsonSchema.Parse(StandardizeReferences(parent, data), _resolver);
             parsed.Id = uri.ToString();
+            parsed.Title = parsed.Title.SanitizeIdentifier();
             var toReturn = new JsonSchemaWrapper(parsed) {Namespace = _ns, Dependencies = dependencies};
 
             // If csharpType is specified

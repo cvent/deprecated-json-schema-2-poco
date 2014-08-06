@@ -1,7 +1,6 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
-using Cvent.SchemaToPoco.Console;
 using Cvent.SchemaToPoco.Core.CodeToLanguage;
 using Cvent.SchemaToPoco.Core.Types;
 using Cvent.SchemaToPoco.Core.Util;

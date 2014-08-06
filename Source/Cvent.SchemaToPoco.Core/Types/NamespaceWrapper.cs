@@ -28,7 +28,6 @@ namespace Cvent.SchemaToPoco.Core.Types
         public void AddImport(string import)
         {
             Namespace.Imports.Add(new CodeNamespaceImport(import));
-            
         }
 
         /// <summary>

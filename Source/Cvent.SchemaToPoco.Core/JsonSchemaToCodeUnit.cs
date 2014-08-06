@@ -98,7 +98,7 @@ namespace Cvent.SchemaToPoco.Core
                     // If it is an enum
                     if (schema.Enum != null)
                     {
-                        string name = StringUtils.Capitalize(i.Key);
+                        string name = i.Key.Capitalize();
                         var enumField = new CodeTypeDeclaration(name);
                         var enumWrap = new EnumWrapper(enumField);
 
@@ -110,7 +110,7 @@ namespace Cvent.SchemaToPoco.Core
 
                         foreach (JToken j in schema.Enum)
                         {
-                            enumWrap.AddMember(StringUtils.SanitizeIdentifier(j.ToString()));
+                            enumWrap.AddMember(j.ToString().SanitizeIdentifier());
                         }
 
                         // Add to namespace
@@ -159,7 +159,7 @@ namespace Cvent.SchemaToPoco.Core
 
                         // Add setters/getters
                         CodeMemberProperty property = CreateProperty("_" + i.Key,
-                            StringUtils.Capitalize(i.Key), field.Type.BaseType);
+                            i.Key.Capitalize(), field.Type.BaseType);
                         var prWrap = new PropertyWrapper(property);
 
                         // Add comments and attributes

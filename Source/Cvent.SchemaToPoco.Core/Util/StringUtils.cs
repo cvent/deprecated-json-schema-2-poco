@@ -2,7 +2,6 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
-using System.Media;
 using System.Text.RegularExpressions;
 
 namespace Cvent.SchemaToPoco.Core.Util
@@ -12,7 +11,7 @@ namespace Cvent.SchemaToPoco.Core.Util
     /// </summary>
     public static class StringUtils
     {
-        private static char[] _escapeChars = new[]
+        private static readonly char[] EscapeChars =
         {
             'w',
             'W',
@@ -27,7 +26,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// </summary>
         /// <param name="s">The string.</param>
         /// <returns>A capitalized string.</returns>
-        public static string Capitalize(string s)
+        public static string Capitalize(this string s)
         {
             if (string.IsNullOrEmpty(s))
             {
@@ -44,7 +43,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// </summary>
         /// <param name="s">The string.</param>
         /// <returns>A sanitized string.</returns>
-        public static string SanitizeIdentifier(string s)
+        public static string SanitizeIdentifier(this string s)
         {
             if (string.IsNullOrEmpty(s))
             {
@@ -77,7 +76,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// <param name="s">The regex.</param>
         /// <param name="literal">Whether or not to sanitize for use as a string literal.</param>
         /// <returns>A sanitized regular expression</returns>
-        public static string SanitizeRegex(string s, bool literal)
+        public static string SanitizeRegex(this string s, bool literal)
         {
             return literal ? ToLiteral(s, true).Replace("\"", "\"\"") : Regex.Escape(s);
         }
@@ -105,7 +104,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// <param name="input">The string.</param>
         /// <param name="preserveEscapes">Whether or not to preserve regex escape sequences.</param>
         /// <returns>An escaped string.</returns>
-        public static string ToLiteral(string input, bool preserveEscapes)
+        public static string ToLiteral(this string input, bool preserveEscapes)
         {
             using (var writer = new StringWriter())
             {
@@ -120,7 +119,7 @@ namespace Cvent.SchemaToPoco.Core.Util
                     // Preserve escape sequences
                     if (preserveEscapes)
                     {
-                        foreach (char c in _escapeChars)
+                        foreach (char c in EscapeChars)
                         {
                             s = s.Replace(@"\\" + c, @"\" + c);
                         }

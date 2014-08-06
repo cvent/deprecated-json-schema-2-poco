@@ -88,7 +88,7 @@ namespace Cvent.SchemaToPoco.Core.Types
                 {
                     AddAttribute("RegularExpression",
                         new CodeAttributeArgument(new CodeSnippetExpression(string.Format(@"@""{0}""",
-                            StringUtils.SanitizeRegex(schema.Pattern, true)))));
+                            schema.Pattern.SanitizeRegex(true)))));
                 }
             }
 

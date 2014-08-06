@@ -22,12 +22,13 @@ namespace Cvent.SchemaToPoco.Core.Types
         public CodeNamespace Namespace { get; set; }
 
         /// <summary>
-        ///     Add an import to the namespace.
+        ///     Add an import to the namespace sorted.
         /// </summary>
         /// <param name="import">The namespace to import.</param>
         public void AddImport(string import)
         {
             Namespace.Imports.Add(new CodeNamespaceImport(import));
+            
         }
 
         /// <summary>

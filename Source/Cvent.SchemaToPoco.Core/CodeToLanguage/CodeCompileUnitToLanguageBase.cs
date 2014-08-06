@@ -14,7 +14,7 @@ namespace Cvent.SchemaToPoco.Core.CodeToLanguage
         /// <summary>
         ///     Constant represented a tab.
         /// </summary>
-        private const string TabCharacter = "\t";
+        private const string TAB_CHARACTER = "\t";
 
         /// <summary>
         ///     The abstract representation of the code.
@@ -39,7 +39,7 @@ namespace Cvent.SchemaToPoco.Core.CodeToLanguage
         {
             var stringBuilder = new StringBuilder();
             var stringWriter = new StringWriter(stringBuilder);
-            var writer = new IndentedTextWriter(stringWriter, TabCharacter);
+            var writer = new IndentedTextWriter(stringWriter, TAB_CHARACTER);
             codeProvider.GenerateCodeFromCompileUnit(_codeCompileUnit, writer, new CodeGeneratorOptions
             {
                 BlankLinesBetweenMembers = true,

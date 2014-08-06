@@ -1,4 +1,4 @@
-﻿namespace Cvent.SchemaToPoco.Console
+﻿namespace Cvent.SchemaToPoco.Core
 {
     internal enum ExitCodes
     {

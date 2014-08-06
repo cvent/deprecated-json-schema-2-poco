@@ -46,6 +46,7 @@ namespace Cvent.SchemaToPoco.Core.Types
             CodeExpression exp;
             int n;
             double m;
+            bool b;
 
             // Check for int
             if (int.TryParse(value, out n))
@@ -56,6 +57,11 @@ namespace Cvent.SchemaToPoco.Core.Types
             else if (double.TryParse(value, out m))
             {
                 exp = new CodePrimitiveExpression(m);
+            }
+            // Check for bool
+            else if (bool.TryParse(value, out b))
+            {
+                exp = new CodePrimitiveExpression(b);
             }
             // Check for {}
             else if (value.Equals("{}"))

@@ -5,24 +5,26 @@ Turn this JSON schema:
 ```json
 {
   "$schema": "http://json-schema.org/draft-03/schema#",
-  "title": "DataSet",
-  "description": "A result set and description of measures and values",
+  "title": "Country",
+  "description": "A nation with its own government, occupying a particular territory",
   "type": "object",
   "properties": {
-    "results": {
-      "$ref": "data-result.json"
+    "flag": {
+      "$ref": "flag.json"
     },
-    "dimensions": {
+    "cities": {
       "type": "array",
-      "description": "An array of data dimensions included in a result set",
+      "description": "A large town",
       "items": {
-        "$ref": "data-dimension.json"
+        "$ref": "city.json"
       },
       "uniqueItems": true
     },
-    "measure": {
-      "$ref": "data-measure.json",
-      "description": "single measure represented in this data set."
+    "population": {
+      "type": "integer",
+      "description": "The number of people inhabiting this country",
+      "minimum": 1000,
+      "required": true
     }
   }
 }
@@ -32,60 +34,62 @@ Into this! (with all references generated in separate files)
 namespace generated
 {
     using System;
+    using com.cvent.country.entities;
     using generated;
-    using com.cvent.board.core;
     using System.Collections.Generic;
-
-
-    // A result set and description of measures and values
-    public class DataSet
+    using Cvent.SchemaToPoco.Core.ValidationAttributes;
+    using System.ComponentModel.DataAnnotations;
+    
+    // A nation with its own government, occupying a particular territory
+    public class Country
     {
-
-        // A result list for data sets
-        public List<DataResult> _results;
-
-        // An array of data dimensions included in a result set
-        public HashSet<DataDimension> _dimensions;
-
-        // Information about a measure returned by a data-source
-        public DataMeasure _measure;
-
-        // A result list for data sets
-        public virtual List<DataResult> Results
+        // Used as the symbol or emblem of a country
+        private Flag _flag;
+        
+        // A large town
+        private HashSet<City> _cities;
+        
+        // The number of people inhabiting this country
+        private int _population;
+        
+        // Used as the symbol or emblem of a country
+        public virtual Flag Flag
         {
             get
             {
-                return _results;
+                return _flag;
             }
             set
             {
-                _results = value;
+                _flag = value;
             }
         }
-
-        // An array of data dimensions included in a result set
-        public virtual HashSet<DataDimension> Dimensions
+        
+        // A large town
+        public virtual HashSet<City> Cities
         {
             get
             {
-                return _dimensions;
+                return _cities;
             }
             set
             {
-                _dimensions = value;
+                _cities = value;
             }
         }
-
-        // Information about a measure returned by a data-source
-        public virtual DataMeasure Measure
+        
+        // The number of people inhabiting this country
+        [Required()]
+        [MinValue(1000)]
+        public virtual int Population
         {
             get
             {
-                return _measure;
+                return _population;
             }
             set
             {
-                _measure = value;
+                _population = value;
             }
         }
     }

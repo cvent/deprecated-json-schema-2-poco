@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-03/schema#",
+  "title": "Flag",
+  "description": "Used as the symbol or emblem of a country",
+  "csharpType": "com.cvent.country.entities.Flag",
+  "properties": {
+    "colors": {
+        "type": "array",
+        "items": {
+            "type": "string"
+        },
+        "description": "Colors seen on the flag"
+    }
+  }
+}

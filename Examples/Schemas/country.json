@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-03/schema#",
+  "title": "Country",
+  "description": "A nation with its own government, occupying a particular territory",
+  "type": "object",
+  "properties": {
+    "flag": {
+      "$ref": "flag.json"
+    },
+    "cities": {
+      "type": "array",
+      "description": "A large town",
+      "items": {
+        "$ref": "city.json"
+      },
+      "uniqueItems": true
+    },
+    "population": {
+      "type": "integer",
+      "description": "The number of people inhabiting this country",
+      "minimum": 1000,
+      "required": true
+    }
+  }
+}

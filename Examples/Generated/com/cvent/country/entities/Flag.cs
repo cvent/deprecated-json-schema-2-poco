@@ -8,17 +8,30 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace generated
+namespace com.cvent.country.entities
 {
     using System;
+    using System.Collections.Generic;
     
     
-    // A result list for data sets
-    public class DataResult
+    // Used as the symbol or emblem of a country
+    public class Flag
     {
         
-        public DataResult()
+        // Colors seen on the flag
+        private List<string> _colors;
+        
+        // Colors seen on the flag
+        public virtual List<string> Colors
         {
+            get
+            {
+                return _colors;
+            }
+            set
+            {
+                _colors = value;
+            }
         }
     }
 }

@@ -98,6 +98,7 @@ namespace Cvent.SchemaToPoco.Core.Util
 
         private JsonSchemaWrapper ResolveSchemaHelper(Uri curr, Uri parent, string data)
         {
+            _log.Debug("ResolveSchemaHelper(" + curr + ", " + parent + ")");
             var definition = new
             {
                 csharpType = string.Empty,
@@ -139,10 +140,12 @@ namespace Cvent.SchemaToPoco.Core.Util
                     // If so, then a new class needs to be created
                     if (s.Value.Properties().Select(p => p.Name).Contains("properties"))
                     {
-                        JsonSchemaWrapper schema = ResolveSchemaHelper(parent, parent, s.Value.ToString());
-
                         // Create dummy Uri
-                        var dummyUri = new Uri(parent, "internal\\" + s.Key);
+                        var dummyUri = new Uri(new Uri(curr + "/"), s.Key);
+
+                        _log.Debug("Dummy URI generated: " + dummyUri);
+
+                        JsonSchemaWrapper schema = ResolveSchemaHelper(dummyUri, parent, s.Value.ToString());
 
                         if (!_schemas.ContainsKey(dummyUri))
                         {
@@ -159,7 +162,7 @@ namespace Cvent.SchemaToPoco.Core.Util
             {
                 parsed = JsonSchema.Parse(StandardizeReferences(parent, data), _resolver);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _log.Error("Could not parse the schema: " + curr + "\nMake sure your schema is compatible." +
                            "Examine the stack trace below.");

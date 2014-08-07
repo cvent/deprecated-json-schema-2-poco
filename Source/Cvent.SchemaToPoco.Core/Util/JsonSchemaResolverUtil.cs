@@ -8,6 +8,7 @@ using Cvent.SchemaToPoco.Core.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
+using NLog;
 
 namespace Cvent.SchemaToPoco.Core.Util
 {
@@ -16,6 +17,11 @@ namespace Cvent.SchemaToPoco.Core.Util
     /// </summary>
     public class JsonSchemaResolverUtil
     {
+        /// <summary>
+        ///     Logger.
+        /// </summary>
+        private readonly Logger _log = LogManager.GetCurrentClassLogger();
+
         /// <summary>
         ///     The absolute path to the base generated directory.
         /// </summary>
@@ -147,7 +153,19 @@ namespace Cvent.SchemaToPoco.Core.Util
             } 
 
             // Set up schema and wrapper to return
-            JsonSchema parsed = JsonSchema.Parse(StandardizeReferences(parent, data), _resolver);
+            JsonSchema parsed;
+
+            try
+            {
+                parsed = JsonSchema.Parse(StandardizeReferences(parent, data), _resolver);
+            }
+            catch (Exception ex)
+            {
+                _log.Error("Could not parse the schema: " + curr + "\nMake sure your schema is compatible." +
+                           "Examine the stack trace below.");
+                throw;
+            }
+
             parsed.Id = curr.ToString();
             parsed.Title = parsed.Title.SanitizeIdentifier();
             var toReturn = new JsonSchemaWrapper(parsed) { Namespace = _ns, Dependencies = dependencies };

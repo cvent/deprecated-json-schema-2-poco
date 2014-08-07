@@ -48,7 +48,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         public static string GetPrimitiveType(Type type)
         {
             string sType = type.ToString();
-            System.Console.WriteLine(sType);
+            Console.WriteLine(sType);
 
             return Primitives.ContainsKey(sType) ? Primitives[sType] : sType;
         }

@@ -129,6 +129,8 @@ namespace Cvent.SchemaToPoco.Core.Util
             {
                 foreach (var s in deserialized.properties)
                 {
+                    // Check that the property also has a top level key called properties
+                    // If so, then a new class needs to be created
                     if (s.Value.Properties().Select(p => p.Name).Contains("properties"))
                     {
                         JsonSchemaWrapper schema = ResolveSchemaHelper(parent, parent, s.Value.ToString());
@@ -142,7 +144,7 @@ namespace Cvent.SchemaToPoco.Core.Util
                         }
                     }
                 }
-            }
+            } 
 
             // Set up schema and wrapper to return
             JsonSchema parsed = JsonSchema.Parse(StandardizeReferences(parent, data), _resolver);

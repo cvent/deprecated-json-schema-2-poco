@@ -62,7 +62,7 @@ namespace Cvent.SchemaToPoco.Core.Types
             else if (bool.TryParse(value, out b))
             {
                 exp = new CodePrimitiveExpression(b);
-            }
+            } 
             // Check for {}
             else if (value.Equals("{}"))
             {

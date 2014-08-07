@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using Cvent.SchemaToPoco.Core.Types;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 
 namespace Cvent.SchemaToPoco.Core.Util
@@ -60,6 +62,8 @@ namespace Cvent.SchemaToPoco.Core.Util
         public Dictionary<Uri, JsonSchemaWrapper> ResolveSchemas(string filePath)
         {
             var uri = GetAbsoluteUri(new Uri(Directory.GetCurrentDirectory()), new Uri(filePath, UriKind.RelativeOrAbsolute), false);
+            
+            // Resolve the root schema
             JsonSchemaWrapper schema = ResolveSchemaHelper(uri, uri);
             _schemas.Add(uri, schema);
             return _schemas;
@@ -67,6 +71,12 @@ namespace Cvent.SchemaToPoco.Core.Util
 
         /// <summary>
         ///     Recursively resolve all schemas. All references to external schemas must have .json extension.
+        ///     This is done by:
+        ///         1. Scanning the schema for $ref attributes.
+        ///         2. Attempting to construct a Uri object to represent the reference.
+        ///         3. Passing it into a resolver to create a network of schemas.
+        ///         4. Modifying the original schema's $ref attributes with the full, unique Uri.
+        ///         5. Setting the id of the referenced schemas to its full, unique Uri.
         /// </summary>
         /// <param name="parent">Path to the parent file.</param>
         /// <param name="current">Path to the current file.</param>
@@ -76,7 +86,18 @@ namespace Cvent.SchemaToPoco.Core.Util
         {
             var uri = GetAbsoluteUri(parent, current, true);
             var data = ReadFromPath(uri);
-            var definition = new {csharpType = string.Empty, csharpInterfaces = new string[] {}};
+
+            return ResolveSchemaHelper(uri, parent, data);
+        }
+
+        private JsonSchemaWrapper ResolveSchemaHelper(Uri curr, Uri parent, string data)
+        {
+            var definition = new
+            {
+                csharpType = string.Empty,
+                csharpInterfaces = new string[] { },
+                properties = new Dictionary<string, JObject>()
+            };
             var deserialized = JsonConvert.DeserializeAnonymousType(data, definition);
             var dependencies = new List<JsonSchemaWrapper>();
 
@@ -103,14 +124,36 @@ namespace Cvent.SchemaToPoco.Core.Util
                 dependencies.Add(schema);
             }
 
+            // Go through properties to see if there needs to be more resolving
+            if (deserialized != null && deserialized.properties != null)
+            {
+                foreach (var s in deserialized.properties)
+                {
+                    // Check that the property also has a top level key called properties
+                    // If so, then a new class needs to be created
+                    if (s.Value.Properties().Select(p => p.Name).Contains("properties"))
+                    {
+                        JsonSchemaWrapper schema = ResolveSchemaHelper(parent, parent, s.Value.ToString());
+
+                        // Create dummy Uri
+                        var dummyUri = new Uri(parent, "internal\\" + s.Key);
+
+                        if (!_schemas.ContainsKey(dummyUri))
+                        {
+                            _schemas.Add(dummyUri, schema);
+                        }
+                    }
+                }
+            } 
+
             // Set up schema and wrapper to return
             JsonSchema parsed = JsonSchema.Parse(StandardizeReferences(parent, data), _resolver);
-            parsed.Id = uri.ToString();
+            parsed.Id = curr.ToString();
             parsed.Title = parsed.Title.SanitizeIdentifier();
-            var toReturn = new JsonSchemaWrapper(parsed) {Namespace = _ns, Dependencies = dependencies};
+            var toReturn = new JsonSchemaWrapper(parsed) { Namespace = _ns, Dependencies = dependencies };
 
             // If csharpType is specified
-            if (!String.IsNullOrEmpty(deserialized.csharpType))
+            if (deserialized != null && !string.IsNullOrEmpty(deserialized.csharpType))
             {
                 // Create directories and set namespace
                 int lastIndex = deserialized.csharpType.LastIndexOf('.');
@@ -126,7 +169,7 @@ namespace Cvent.SchemaToPoco.Core.Util
             }
 
             // If csharpInterfaces is specified
-            if (deserialized.csharpInterfaces != null)
+            if (deserialized != null && deserialized.csharpInterfaces != null)
             {
                 foreach (string s in deserialized.csharpInterfaces)
                 {

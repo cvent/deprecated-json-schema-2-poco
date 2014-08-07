@@ -118,6 +118,14 @@ namespace Cvent.SchemaToPoco.Core
                     }
                     else
                     {
+                        // Check if a new class needs to be created
+                        if (schema.Properties != null)
+                        {
+                            // Create the class
+
+                            // Set the type
+                        }
+
                         // WARNING: This assumes the namespace of the property is the same as the parent.
                         // This should not be a problem since imports are handled for all dependencies at the beginning.
                         Type type = JsonSchemaUtils.GetType(schema, _codeNamespace);

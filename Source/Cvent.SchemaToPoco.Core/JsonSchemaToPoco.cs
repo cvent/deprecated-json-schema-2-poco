@@ -132,11 +132,11 @@ namespace Cvent.SchemaToPoco.Core
                     string saveLoc = _baseDir + @"\" + entry.Key.Namespace.Replace('.', '\\') + @"\" + entry.Key.Schema.Title +
                                      ".cs";
                     IoUtils.GenerateFile(entry.Value, saveLoc);
-                    System.Console.WriteLine("Wrote " + saveLoc);
+                    Console.WriteLine("Wrote " + saveLoc);
                 }
                 else
                 {
-                    System.Console.WriteLine(entry.Value);
+                    Console.WriteLine(entry.Value);
                 }
             }
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using Cvent.SchemaToPoco.Core.Types;
@@ -124,18 +125,21 @@ namespace Cvent.SchemaToPoco.Core.Util
             }
 
             // Go through properties to see if there needs to be more resolving
-            if (deserialized.properties != null)
+            if (deserialized != null && deserialized.properties != null)
             {
                 foreach (var s in deserialized.properties)
                 {
-                    JsonSchemaWrapper schema = ResolveSchemaHelper(parent, parent, s.Value.ToString());
-
-                    // Create dummy Uri
-                    var dummyUri = new Uri(parent, "internal\\" + s.Key);
-
-                    if (!_schemas.ContainsKey(dummyUri))
+                    if (s.Value.Properties().Select(p => p.Name).Contains("properties"))
                     {
-                        _schemas.Add(dummyUri, schema);
+                        JsonSchemaWrapper schema = ResolveSchemaHelper(parent, parent, s.Value.ToString());
+
+                        // Create dummy Uri
+                        var dummyUri = new Uri(parent, "internal\\" + s.Key);
+
+                        if (!_schemas.ContainsKey(dummyUri))
+                        {
+                            _schemas.Add(dummyUri, schema);
+                        }
                     }
                 }
             }
@@ -147,7 +151,7 @@ namespace Cvent.SchemaToPoco.Core.Util
             var toReturn = new JsonSchemaWrapper(parsed) { Namespace = _ns, Dependencies = dependencies };
 
             // If csharpType is specified
-            if (!string.IsNullOrEmpty(deserialized.csharpType))
+            if (deserialized != null && !string.IsNullOrEmpty(deserialized.csharpType))
             {
                 // Create directories and set namespace
                 int lastIndex = deserialized.csharpType.LastIndexOf('.');
@@ -163,7 +167,7 @@ namespace Cvent.SchemaToPoco.Core.Util
             }
 
             // If csharpInterfaces is specified
-            if (deserialized.csharpInterfaces != null)
+            if (deserialized != null && deserialized.csharpInterfaces != null)
             {
                 foreach (string s in deserialized.csharpInterfaces)
                 {

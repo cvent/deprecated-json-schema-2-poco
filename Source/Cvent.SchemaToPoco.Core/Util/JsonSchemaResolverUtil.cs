@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using NLog;
+using NLog.Common;
 
 namespace Cvent.SchemaToPoco.Core.Util
 {
@@ -98,7 +99,7 @@ namespace Cvent.SchemaToPoco.Core.Util
 
         private JsonSchemaWrapper ResolveSchemaHelper(Uri curr, Uri parent, string data)
         {
-            _log.Debug("ResolveSchemaHelper(" + curr + ", " + parent + ")");
+            //_log.Debug("ResolveSchemaHelper(" + curr + ", " + parent + ")");
             var definition = new
             {
                 csharpType = string.Empty,
@@ -140,12 +141,14 @@ namespace Cvent.SchemaToPoco.Core.Util
                     // If so, then a new class needs to be created
                     if (s.Value.Properties().Select(p => p.Name).Contains("properties"))
                     {
-                        // Create dummy Uri
+                        // Create dummy internal Uri
                         var dummyUri = new Uri(new Uri(curr + "/"), s.Key);
 
-                        _log.Debug("Dummy URI generated: " + dummyUri);
+                        //_log.Debug("Dummy URI generated: " + dummyUri);
 
-                        JsonSchemaWrapper schema = ResolveSchemaHelper(dummyUri, parent, s.Value.ToString());
+                        JsonSchemaWrapper schema = ResolveSchemaHelper(dummyUri, curr, s.Value.ToString());
+
+                        //_log.Debug("Generated internal schema title: " + schema.Schema.Title);
 
                         if (!_schemas.ContainsKey(dummyUri))
                         {

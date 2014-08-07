@@ -23,7 +23,19 @@ namespace Cvent.SchemaToPoco.Core.Types
             Interfaces = new List<Type>();
             Dependencies = new List<JsonSchemaWrapper>();
 
-            Schema.Title = Schema.Title ?? DEFAULT_CLASS_NAME;
+            // Set the schema title if it does not exist
+            if (string.IsNullOrEmpty(Schema.Title))
+            {
+                if (Schema.Items != null && Schema.Items.Count > 0 && Schema.Items[0].Title != null)
+                {
+                    Schema.Title = Schema.Items[0].Title;
+                }
+                else
+                {
+                    Schema.Title = DEFAULT_CLASS_NAME;
+                }
+
+            }
         }
 
         /// <summary>

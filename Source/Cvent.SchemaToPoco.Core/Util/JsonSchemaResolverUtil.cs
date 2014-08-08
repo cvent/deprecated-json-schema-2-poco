@@ -139,49 +139,37 @@ namespace Cvent.SchemaToPoco.Core.Util
             {
                 foreach (var s in deserialized.properties)
                 {
-                    // TODO definitely a better way of doing this
-                    var propertyKeys = s.Value.Properties().Select(p => p.Name).ToArray();
+                    var properties = s.Value.Properties();
 
-                    // Check that the property also has a top level key called properties
-                    // If so, then a new class needs to be created
-                    if (propertyKeys.Contains("properties"))
+                    // Check that the property also has a top level key called properties or items
+                    foreach (var prop in properties)
                     {
-                        // Create dummy internal Uri
-                        var dummyUri = new Uri(new Uri(curr + "/"), s.Key);
+                        var isProp = prop.Name.Equals("properties");
+                        var isItem = prop.Name.Equals("items");
 
-                        //_log.Debug("Dummy URI generated: " + dummyUri);
-
-                        JsonSchemaWrapper schema = ResolveSchemaHelper(dummyUri, curr, s.Value.ToString());
-
-                        //_log.Debug("Generated internal schema title: " + schema.Schema.Title);
-
-                        if (!_schemas.ContainsKey(dummyUri))
+                        if (isProp || isItem)
                         {
-                            _schemas.Add(dummyUri, schema);
-                        }
-                    }
-
-                    // Check if the property is an array AND the items property has a key called properties
-                    if (propertyKeys.Contains("items"))
-                    {
-                        // Get the property itself... dumb code
-                        foreach (var i in s.Value.Properties())
-                        {
-                            if (i.Name.Equals("items"))
+                            // If it's an array, also check that it needs to be created
+                            // TODO ehhhh let's avoid hardcoding this
+                            if (isItem && !prop.Value.ToString().Contains("\"properties\""))
                             {
-                                // Create dummy internal Uri
-                                var dummyUri = new Uri(new Uri(curr + "/"), s.Key);
+                                break;
+                            }
 
-                                //_log.Debug("Dummy URI generated: " + dummyUri);
+                            var propData = isProp ? s.Value.ToString() : prop.Value.ToString();
 
-                                JsonSchemaWrapper schema = ResolveSchemaHelper(dummyUri, curr, i.Value.ToString());
+                            // Create dummy internal Uri
+                            var dummyUri = new Uri(new Uri(curr + "/"), s.Key);
 
-                                //_log.Debug("Generated internal schesma title: " + schema.Schema.Title);
+                            //_log.Debug("Dummy URI generated: " + dummyUri);
 
-                                if (!_schemas.ContainsKey(dummyUri))
-                                {
-                                    _schemas.Add(dummyUri, schema);
-                                }
+                            JsonSchemaWrapper schema = ResolveSchemaHelper(dummyUri, curr, propData);
+
+                            //_log.Debug("Generated internal schema title: " + schema.Schema.Title);
+
+                            if (!_schemas.ContainsKey(dummyUri))
+                            {
+                                _schemas.Add(dummyUri, schema);
                             }
                         }
                     }

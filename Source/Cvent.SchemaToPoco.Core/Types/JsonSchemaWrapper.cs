@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cvent.SchemaToPoco.Core.Util;
 using Newtonsoft.Json.Schema;
 
 namespace Cvent.SchemaToPoco.Core.Types
@@ -24,17 +25,17 @@ namespace Cvent.SchemaToPoco.Core.Types
             Dependencies = new List<JsonSchemaWrapper>();
 
             // Set the schema title if it does not exist
+            // TODO this can probably use the GetType in JsonSchemaUtils
             if (string.IsNullOrEmpty(Schema.Title))
             {
                 if (Schema.Items != null && Schema.Items.Count > 0 && Schema.Items[0].Title != null)
                 {
-                    Schema.Title = Schema.Items[0].Title;
+                    Schema.Title = Schema.Items[0].Title.SanitizeIdentifier();
                 }
                 else
                 {
                     Schema.Title = DEFAULT_CLASS_NAME;
                 }
-
             }
         }
 

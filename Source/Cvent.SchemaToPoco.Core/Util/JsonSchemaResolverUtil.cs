@@ -100,6 +100,8 @@ namespace Cvent.SchemaToPoco.Core.Util
         private JsonSchemaWrapper ResolveSchemaHelper(Uri curr, Uri parent, string data)
         {
             //_log.Debug("ResolveSchemaHelper(" + curr + ", " + parent + ")");
+            //_log.Debug(data);
+
             var definition = new
             {
                 csharpType = string.Empty,
@@ -137,9 +139,12 @@ namespace Cvent.SchemaToPoco.Core.Util
             {
                 foreach (var s in deserialized.properties)
                 {
+                    // TODO definitely a better way of doing this
+                    var propertyKeys = s.Value.Properties().Select(p => p.Name).ToArray();
+
                     // Check that the property also has a top level key called properties
                     // If so, then a new class needs to be created
-                    if (s.Value.Properties().Select(p => p.Name).Contains("properties"))
+                    if (propertyKeys.Contains("properties"))
                     {
                         // Create dummy internal Uri
                         var dummyUri = new Uri(new Uri(curr + "/"), s.Key);
@@ -153,6 +158,31 @@ namespace Cvent.SchemaToPoco.Core.Util
                         if (!_schemas.ContainsKey(dummyUri))
                         {
                             _schemas.Add(dummyUri, schema);
+                        }
+                    }
+
+                    // Check if the property is an array AND the items property has a key called properties
+                    if (propertyKeys.Contains("items"))
+                    {
+                        // Get the property itself... dumb code
+                        foreach (var i in s.Value.Properties())
+                        {
+                            if (i.Name.Equals("items"))
+                            {
+                                // Create dummy internal Uri
+                                var dummyUri = new Uri(new Uri(curr + "/"), s.Key);
+
+                                //_log.Debug("Dummy URI generated: " + dummyUri);
+
+                                JsonSchemaWrapper schema = ResolveSchemaHelper(dummyUri, curr, i.Value.ToString());
+
+                                //_log.Debug("Generated internal schesma title: " + schema.Schema.Title);
+
+                                if (!_schemas.ContainsKey(dummyUri))
+                                {
+                                    _schemas.Add(dummyUri, schema);
+                                }
+                            }
                         }
                     }
                 }

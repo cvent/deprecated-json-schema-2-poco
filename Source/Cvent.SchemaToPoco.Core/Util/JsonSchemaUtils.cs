@@ -76,7 +76,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// <param name="schema">The JSON schema.</param>
         /// <param name="ns">The namespace.</param>
         /// <returns>The type of the schema.</returns>
-        public static Type GetType(JsonSchema schema, string ns)
+        public static Type GetType(JsonSchema schema, string ns = "")
         {
             string toRet = DEFAULT_TYPE;
             var builder = new TypeBuilderHelper(ns);

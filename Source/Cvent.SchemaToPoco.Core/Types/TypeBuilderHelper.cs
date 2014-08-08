@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
+using Cvent.SchemaToPoco.Core.Util;
 
 namespace Cvent.SchemaToPoco.Core.Types
 {
@@ -39,6 +40,7 @@ namespace Cvent.SchemaToPoco.Core.Types
         /// <returns>A custom Type object.</returns>
         public Type GetCustomType(string type, bool includeNs)
         {
+            type = type.SanitizeIdentifier();
             return _mb.DefineType(includeNs ? _ns + "." + type : type).CreateType();
         }
     }

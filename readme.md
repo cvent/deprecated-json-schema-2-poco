@@ -142,7 +142,7 @@ string code = JsonSchemaToPoco.Generate("/location/to/schema");
 ```
 
 ## [Reference](https://github.com/cvent/json-schema-2-poco/wiki/Reference)
-Current version: 1.1 (Alpha)
+Current version: 1.2 (Alpha)
 
 [View changelog](https://github.com/cvent/json-schema-2-poco/wiki/Changelog)
 

@@ -147,15 +147,9 @@ namespace Cvent.SchemaToPoco.Core.Util
                         var isProp = prop.Name.Equals("properties");
                         var isItem = prop.Name.Equals("items");
 
-                        if (isProp || isItem)
+                        // TODO ehhhh let's avoid hardcoding this
+                        if (isProp || (isItem && prop.Value.ToString().Contains("\"properties\"")))
                         {
-                            // If it's an array, also check that it needs to be created
-                            // TODO ehhhh let's avoid hardcoding this
-                            if (isItem && !prop.Value.ToString().Contains("\"properties\""))
-                            {
-                                break;
-                            }
-
                             var propData = isProp ? s.Value.ToString() : prop.Value.ToString();
 
                             // Create dummy internal Uri

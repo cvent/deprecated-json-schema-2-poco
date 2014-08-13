@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Cvent.SchemaToPoco.Core;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 
 namespace Test
@@ -9,13 +10,22 @@ namespace Test
     {
         private static void Main(string[] args)
         {
-            /*Regex r = new Regex(@"^\\\""dev\""\'[a-c]\s$");
-            string text = @"\""dev""'a ";
-            MatchCollection col = r.Matches(text);
-            Console.WriteLine(text);
-            Console.WriteLine("{0} matches found", col.Count);*/
-            var uri = new Uri("file:///C:/Users/SLiu/Projects/json-schema-2-poco/Examples/Schemas");
-            System.Console.WriteLine(uri.IsFile);
+            string json = @"{
+                'fOo': [
+                    'User',
+                    'Admin'
+                ],
+                'str': 'asdfaasdfasdfasdf'
+            }";
+
+            var def = JsonConvert.DeserializeObject<DefaultClass>(json);
+
+            foreach(var s in def.Foo)
+                Console.WriteLine(s);
+
+            Console.WriteLine(def.Str);
+
+            Console.ReadLine();
         }
     }
 }

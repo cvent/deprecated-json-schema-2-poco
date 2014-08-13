@@ -34,7 +34,8 @@ namespace Cvent.SchemaToPoco.Console
         public JsonSchemaToPocoCLExecutor(IEnumerable<string> args)
         {
             _settings = ConfigureCommandLineOptions(args);
-            _controller = new JsonSchemaToPoco(_settings.Schema, _settings.Namespace, _settings.OutputFiledir, _settings.Verbose);
+            
+            _controller = new JsonSchemaToPoco(_settings.Config);
         }
 
         /// <summary>
@@ -48,12 +49,16 @@ namespace Cvent.SchemaToPoco.Console
 
             _options = new OptionSet
             {
-                {"n=|namespace=", "Namespace contaning all of the generated classes", ns => settings.Namespace = ns},
-                {"s=|schema=", "File path to the schema file", s => settings.Schema = s},
-                {"o=|output=", "Directory to save files", fn => settings.OutputFiledir = fn},
+                {"n=|namespace=", "Namespace contaning all of the generated classes", ns => settings.Config.Namespace = ns},
+                {"s=|schema=", "File path to the schema file", s => settings.Config.JsonSchemaFileLocation = s},
+                {"o=|output=", "Directory to save files", fn => settings.Config.OutputDirectory = fn},
                 {
                     "v|verbose", "Print out files in console without generating",
-                    v => settings.Verbose = !string.IsNullOrWhiteSpace(v)
+                    v => settings.Config.Verbose = !string.IsNullOrWhiteSpace(v)
+                },
+                {
+                    "a=|attribute=", "Attribute type (1 - Default DataAnnotations, 2 - JSON.net compatible attributes",
+                    fn => settings.Config.AttributeType = (AttributeType) Enum.Parse(typeof(AttributeType), fn)
                 },
                 {"?|help", "Show this help message", h => settings.ShowHelp = !string.IsNullOrWhiteSpace(h)}
             };

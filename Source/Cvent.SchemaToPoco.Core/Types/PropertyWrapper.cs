@@ -19,7 +19,8 @@ namespace Cvent.SchemaToPoco.Core.Types
         ///     Add all comments and attributes.
         /// </summary>
         /// <param name="schema">The JsonSchema.</param>
-        public void Populate(JsonSchema schema)
+        /// <param name="type">Annotation type to generate.</param>
+        public void Populate(JsonSchema schema, AttributeType type)
         {
             // Add description
             if (schema.Description != null)
@@ -30,6 +31,17 @@ namespace Cvent.SchemaToPoco.Core.Types
             // Add required attribute
             if (schema.Required != null && schema.Required.Value)
             {
+                /*switch (type)
+                {
+                    case AttributeType.SystemDefault:
+                        AddAttribute("Required");
+                        break;
+                    case AttributeType.JsonDotNet:
+                        AddAttribute("JsonProperty",
+                            new CodeAttributeArgument("Required", new CodeSnippetExpression("Required.Always")));
+                        break;
+                }*/
+
                 AddAttribute("Required");
             }
 

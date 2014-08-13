@@ -29,7 +29,12 @@ namespace Cvent.SchemaToPoco.Core
         /// </summary>
         private readonly JsonSchemaWrapper _schemaWrapper;
 
-        public JsonSchemaToCodeUnit(JsonSchemaWrapper schema, string requestedNamespace)
+        /// <summary>
+        ///     The annotation type.
+        /// </summary>
+        private readonly AttributeType _attributeType;
+
+        public JsonSchemaToCodeUnit(JsonSchemaWrapper schema, string requestedNamespace, AttributeType attributeType)
         {
             if (schema == null || schema.Schema == null)
             {
@@ -39,10 +44,11 @@ namespace Cvent.SchemaToPoco.Core
             _schemaWrapper = schema;
             _schemaDocument = schema.Schema;
             _codeNamespace = requestedNamespace;
+            _attributeType = attributeType;
         }
 
         public JsonSchemaToCodeUnit(JsonSchemaWrapper schema)
-            : this(schema, "")
+            : this(schema, "", AttributeType.SystemDefault)
         {
         }
 
@@ -163,7 +169,7 @@ namespace Cvent.SchemaToPoco.Core
                         var prWrap = new PropertyWrapper(property);
 
                         // Add comments and attributes
-                        prWrap.Populate(schema);
+                        prWrap.Populate(schema, _attributeType);
 
                         // Add default, if any
                         if (schema.Default != null)

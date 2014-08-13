@@ -52,6 +52,7 @@
     <Compile Include="ExitCodes.cs" />
     <Compile Include="JsonSchemaToCodeUnit.cs" />
     <Compile Include="JsonSchemaToPoco.cs" />
+    <Compile Include="JsonSchemaToPocoConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\BaseWrapper.cs" />
     <Compile Include="Types\ClassWrapper.cs" />

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using Cvent.SchemaToPoco.Core.Types;
 using Cvent.SchemaToPoco.Core.Util;
 using Newtonsoft.Json.Schema;
 
-namespace Cvent.SchemaToPoco.Core.Types
+namespace Cvent.SchemaToPoco.Core.Wrappers
 {
     /// <summary>
     ///     Wrapper for an automatic property.

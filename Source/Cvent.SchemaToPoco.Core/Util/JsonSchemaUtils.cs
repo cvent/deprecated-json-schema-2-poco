@@ -5,15 +5,6 @@ using Newtonsoft.Json.Schema;
 namespace Cvent.SchemaToPoco.Core.Util
 {
     /// <summary>
-    ///     Abstraction for the different schema array types.
-    /// </summary>
-    public enum ArrayType
-    {
-        List,
-        HashSet
-    };
-
-    /// <summary>
     ///     Common utilities for a JsonSchema.
     /// </summary>
     public static class JsonSchemaUtils

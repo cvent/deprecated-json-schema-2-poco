@@ -3,7 +3,7 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Cvent.SchemaToPoco.Core.Types
+namespace Cvent.SchemaToPoco.Core.Wrappers
 {
     /// <summary>
     ///     Wrapper for a CodeDom enum.

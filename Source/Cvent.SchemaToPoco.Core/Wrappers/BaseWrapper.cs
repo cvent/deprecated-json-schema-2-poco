@@ -1,7 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 
-namespace Cvent.SchemaToPoco.Core.Types
+namespace Cvent.SchemaToPoco.Core.Wrappers
 {
     /// <summary>
     ///     Generic wrapper for property-type objects ie. classes and properties.

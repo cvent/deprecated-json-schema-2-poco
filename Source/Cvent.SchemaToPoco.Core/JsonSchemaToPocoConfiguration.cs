@@ -1,23 +1,8 @@
 ﻿using System.IO;
+using Cvent.SchemaToPoco.Core.Types;
 
 namespace Cvent.SchemaToPoco.Core
 {
-    /// <summary>
-    ///     Determine type of annotation to generate.
-    /// </summary>
-    public enum AttributeType
-    {
-        /// <summary>
-        ///     Compatible with ASP.net WebAPI.
-        /// </summary>
-        SystemDefault = 1,
-
-        /// <summary>
-        ///     Compatible with JSON.net deserialization.
-        /// </summary>
-        JsonDotNet = 2,
-    }
-
     /// <summary>
     ///     Configuration class for JsonSchemaToPoco.
     /// </summary>

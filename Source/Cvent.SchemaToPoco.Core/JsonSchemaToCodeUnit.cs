@@ -3,6 +3,7 @@ using System.CodeDom;
 using System.Text.RegularExpressions;
 using Cvent.SchemaToPoco.Core.Types;
 using Cvent.SchemaToPoco.Core.Util;
+using Cvent.SchemaToPoco.Core.Wrappers;
 using Microsoft.CSharp;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;

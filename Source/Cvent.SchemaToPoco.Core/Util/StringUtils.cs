@@ -82,23 +82,6 @@ namespace Cvent.SchemaToPoco.Core.Util
         }
 
         /// <summary>
-        ///     Load data from a Uri.
-        /// </summary>
-        /// <param name="uri">The Uri.</param>
-        /// <returns>A string with all the data.</returns>
-        public static string LoadUri(Uri uri)
-        {
-            if (uri.IsFile)
-            {
-                using (TextReader reader = File.OpenText(uri.ToString()))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
         ///     Convert a string to a literal string.
         /// </summary>
         /// <param name="input">The string.</param>

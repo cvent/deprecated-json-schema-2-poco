@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 using Cvent.SchemaToPoco.Core.Types;
+using Cvent.SchemaToPoco.Core.Util;
+using Cvent.SchemaToPoco.Core.Wrappers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using NLog;
-using NLog.Common;
 
-namespace Cvent.SchemaToPoco.Core.Util
+namespace Cvent.SchemaToPoco.Core
 {
     /// <summary>
     ///     Resolve JSON schema $ref attributes
     /// </summary>
-    public class JsonSchemaResolverUtil
+    public class JsonSchemaResolver
     {
         /// <summary>
         ///     Logger.
@@ -41,7 +40,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// <summary>
         ///     Resolving schemas so that they can be parsed.
         /// </summary>
-        private readonly JsonSchemaResolver _resolver = new JsonSchemaResolver();
+        private readonly Newtonsoft.Json.Schema.JsonSchemaResolver _resolver = new Newtonsoft.Json.Schema.JsonSchemaResolver();
 
         /// <summary>
         ///     Keeps track of the found schemas.
@@ -54,7 +53,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// <param name="ns">settings.Namespace</param>
         /// <param name="createDirs">settings.Verbose</param>
         /// <param name="baseDir">The base directory of the generated files.</param>
-        public JsonSchemaResolverUtil(string ns, bool createDirs, string baseDir)
+        public JsonSchemaResolver(string ns, bool createDirs, string baseDir)
         {
             _ns = ns;
             _createDirs = createDirs;
@@ -68,7 +67,7 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// <returns>A Dictionary containing all resolved schemas.</returns>
         public Dictionary<Uri, JsonSchemaWrapper> ResolveSchemas(string filePath)
         {
-            var uri = GetAbsoluteUri(new Uri(Directory.GetCurrentDirectory()), new Uri(filePath, UriKind.RelativeOrAbsolute), false);
+            var uri = IoUtils.GetAbsoluteUri(new Uri(Directory.GetCurrentDirectory()), new Uri(filePath, UriKind.RelativeOrAbsolute), false);
             
             // Resolve the root schema
             JsonSchemaWrapper schema = ResolveSchemaHelper(uri, uri);
@@ -91,17 +90,14 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// TODO check if parent is needed - right now it assumes parent for all children
         private JsonSchemaWrapper ResolveSchemaHelper(Uri parent, Uri current)
         {
-            var uri = GetAbsoluteUri(parent, current, true);
-            var data = ReadFromPath(uri);
+            var uri = IoUtils.GetAbsoluteUri(parent, current, true);
+            var data = IoUtils.ReadFromPath(uri);
 
             return ResolveSchemaHelper(uri, parent, data);
         }
 
         private JsonSchemaWrapper ResolveSchemaHelper(Uri curr, Uri parent, string data)
         {
-            //_log.Debug("ResolveSchemaHelper(" + curr + ", " + parent + ")");
-            //_log.Debug(data);
-
             var definition = new
             {
                 csharpType = string.Empty,
@@ -116,7 +112,7 @@ namespace Cvent.SchemaToPoco.Core.Util
             {
                 // Get the full path to the file, and change the reference to match
                 var currPath = new Uri(match.Groups[1].Value, UriKind.RelativeOrAbsolute);
-                var currUri = GetAbsoluteUri(parent, currPath, true);
+                var currUri = IoUtils.GetAbsoluteUri(parent, currPath, true);
 
                 JsonSchemaWrapper schema;
 
@@ -155,11 +151,7 @@ namespace Cvent.SchemaToPoco.Core.Util
                             // Create dummy internal Uri
                             var dummyUri = new Uri(new Uri(curr + "/"), s.Key);
 
-                            //_log.Debug("Dummy URI generated: " + dummyUri);
-
                             JsonSchemaWrapper schema = ResolveSchemaHelper(dummyUri, curr, propData);
-
-                            //_log.Debug("Generated internal schema title: " + schema.Schema.Title);
 
                             if (!_schemas.ContainsKey(dummyUri))
                             {
@@ -227,56 +219,6 @@ namespace Cvent.SchemaToPoco.Core.Util
         }
 
         /// <summary>
-        ///     Read data from a Uri path.
-        /// </summary>
-        /// <param name="path">The path to read from.</param>
-        /// <returns>The string contents of that path.</returns>
-        private string ReadFromPath(Uri path)
-        {
-            // file://, relative, and absolute paths
-            if(path.IsFile)
-            {
-                return File.ReadAllText(path.AbsolutePath);
-            }
-
-            // http://, https://
-            if (path.ToString().StartsWith("http"))
-            {
-                using (var client = new WebClient())
-                {
-                    return client.DownloadString(path);
-                }
-            }
-
-            throw new ArgumentException("Cannot read from the path: " + path);
-        }
-
-        /// <summary>
-        ///     Get an absolute Uri given a relative Uri. If the relative Uri is absolute, then return that.
-        /// </summary>
-        /// <param name="baseUri">The base, or parent Uri.</param>
-        /// <param name="relativeUri">The relative Uri to combine.</param>
-        /// <param name="preserveSlashes">Leave the baseUri and relativeUri slashes untouched. If false, the relativeUri is guaranteed to be relative to the baseUri.</param>
-        /// <returns>An absolute Uri.</returns>
-        private Uri GetAbsoluteUri(Uri baseUri, Uri relativeUri, bool preserveSlashes)
-        {
-            if (relativeUri.IsAbsoluteUri)
-            {
-                return relativeUri;
-            }
-
-            if (!preserveSlashes)
-            {
-                if (!baseUri.ToString().EndsWith(@"\"))
-                {
-                    baseUri = new Uri(baseUri + @"\");
-                }
-            }
-
-            return new Uri(baseUri, relativeUri);
-        }
-
-        /// <summary>
         ///     Convert all $ref attributes to absolute paths.
         /// </summary>
         /// <param name="parentUri">The parent Uri to resolve relative paths against.</param>
@@ -293,7 +235,7 @@ namespace Cvent.SchemaToPoco.Core.Util
                 {
                     var matched = pattern.Match(lines[i]);
                     var matchedPath = matched.Groups[2].Value;
-                    var absPath = GetAbsoluteUri(parentUri, new Uri(matchedPath, UriKind.RelativeOrAbsolute), true);
+                    var absPath = IoUtils.GetAbsoluteUri(parentUri, new Uri(matchedPath, UriKind.RelativeOrAbsolute), true);
                     lines[i] = matched.Groups[1].Value + absPath + matched.Groups[3].Value + ",";
                 }
             }

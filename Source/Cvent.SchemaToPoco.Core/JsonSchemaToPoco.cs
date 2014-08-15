@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Cvent.SchemaToPoco.Core.CodeToLanguage;
 using Cvent.SchemaToPoco.Core.Types;
 using Cvent.SchemaToPoco.Core.Util;
+using Cvent.SchemaToPoco.Core.Wrappers;
+using Cvent.SchemaToPoco.Types;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -86,7 +88,7 @@ namespace Cvent.SchemaToPoco.Core
         /// </summary>
         private void LoadSchemas()
         {
-            var resolver = new JsonSchemaResolverUtil(_configuration.Namespace, !_configuration.Verbose, _configuration.OutputDirectory);
+            var resolver = new JsonSchemaResolver(_configuration.Namespace, !_configuration.Verbose, _configuration.OutputDirectory);
             _schemas = resolver.ResolveSchemas(_configuration.JsonSchemaFileLocation);
         }
 
@@ -119,6 +121,10 @@ namespace Cvent.SchemaToPoco.Core
             }
         }
 
+        /// <summary>
+        ///     Return a Dictionary containing a map of the generated JsonSchemaWrappers with the generated code as a string.
+        /// </summary>
+        /// <returns>A mapping of all the JSON schemas and the generated code.</returns>
         private Dictionary<JsonSchemaWrapper, string> GenerateHelper()
         {
             var generatedCode = new Dictionary<JsonSchemaWrapper, string>();
@@ -162,10 +168,7 @@ namespace Cvent.SchemaToPoco.Core
         /// <returns>The generated code.</returns>
         public static string Generate(JsonSchemaToPocoConfiguration configuration)
         {
-            var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(JsonSchemaResolverUtil.ConvertToWrapper(configuration.JsonSchemaFileLocation), configuration.Namespace, configuration.AttributeType);
-            CodeCompileUnit codeUnit = jsonSchemaToCodeUnit.Execute();
-            var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
-            return csharpGenerator.Execute();
+            return Generate(configuration.JsonSchemaFileLocation, configuration.Namespace, configuration.AttributeType);
         }
 
         /// <summary>
@@ -177,7 +180,7 @@ namespace Cvent.SchemaToPoco.Core
         /// <returns>The generated code.</returns>
         public static string Generate(string schema, string ns = "generated", AttributeType type = AttributeType.SystemDefault)
         {
-            var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(JsonSchemaResolverUtil.ConvertToWrapper(schema), ns, type);
+            var jsonSchemaToCodeUnit = new JsonSchemaToCodeUnit(JsonSchemaResolver.ConvertToWrapper(schema), ns, type);
             CodeCompileUnit codeUnit = jsonSchemaToCodeUnit.Execute();
             var csharpGenerator = new CodeCompileUnitToCSharp(codeUnit);
             return csharpGenerator.Execute();

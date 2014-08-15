@@ -3,7 +3,7 @@ using System.CodeDom;
 using Cvent.SchemaToPoco.Core.Util;
 using Newtonsoft.Json.Schema;
 
-namespace Cvent.SchemaToPoco.Core.Types
+namespace Cvent.SchemaToPoco.Core.Wrappers
 {
     /// <summary>
     ///     Wrapper for a CodeDom namespace.

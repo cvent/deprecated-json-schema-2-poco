@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Cvent.SchemaToPoco.Core;
+using Cvent.SchemaToPoco.Core.Types;
+using Cvent.SchemaToPoco.Types;
 using NDesk.Options;
 
 namespace Cvent.SchemaToPoco.Console

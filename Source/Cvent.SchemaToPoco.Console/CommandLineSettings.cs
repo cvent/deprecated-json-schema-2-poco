@@ -1,28 +1,43 @@
 ﻿using System.IO;
-using Cvent.SchemaToPoco.Core;
 
-namespace Cvent.SchemaToPoco.Console
+namespace Cvent.SchemaToPoco
 {
     /// <summary>
     ///     Command line settings.
     /// </summary>
     internal class CommandLineSettings
     {
-        public CommandLineSettings()
-        {
-            // Meaningful defaults
-            Config = new JsonSchemaToPocoConfiguration();
-            ShowHelp = false;
-        }
+        /// <summary>
+        ///     Location of root JSON schema file.
+        /// </summary>
+        public string JsonSchemaFileLocation { get; set; }
 
         /// <summary>
-        ///     Configuration for JsonSchemaToPoco.
+        ///     Namespace to set for generated files.
         /// </summary>
-        public JsonSchemaToPocoConfiguration Config { get; set; }
+        public string Namespace { get; set; }
+
+        /// <summary>
+        ///     Directory to output generated files.
+        /// </summary>
+        public string OutputDirectory { get; set; }
+
+        /// <summary>
+        ///     Whether or not to just print out files in console without generating.
+        /// </summary>
+        public bool Verbose { get; set; }
 
         /// <summary>
         ///     Show command line help.
         /// </summary>
         public bool ShowHelp { get; set; }
+
+        public CommandLineSettings()
+        {
+            Namespace = "generated";
+            OutputDirectory = Directory.GetCurrentDirectory();
+            Verbose = false;
+            ShowHelp = false;
+        }
     }
 }

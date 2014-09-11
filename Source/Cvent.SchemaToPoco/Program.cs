@@ -30,9 +30,9 @@ namespace Cvent.SchemaToPoco
         {
             var settings = ParseCommandLineParameters(args);
             var schema = JsonSchemaParser.Parse(new Uri(settings.JsonSchemaFileLocation));
-            var jsonClass = JsonClass.CreateFromSchema(schema, settings.Namespace);
-            var uniqueClassesById = new Dictionary<string, JsonClass>();
-            var uniqueClassesByName = new Dictionary<string, JsonClass>();
+            var jsonClass = JsonSchemaClass.CreateFromSchema(schema, settings.Namespace);
+            var uniqueClassesById = new Dictionary<string, JsonSchemaClass>();
+            var uniqueClassesByName = new Dictionary<string, JsonSchemaClass>();
             GetUniqueJsonClasses(jsonClass, uniqueClassesById, uniqueClassesByName);
 
             foreach (var jClass in uniqueClassesById.Values)
@@ -52,10 +52,6 @@ namespace Cvent.SchemaToPoco
                 {"n=|namespace=", "Namespace containing all of the generated classes", ns => settings.Namespace = ns},
                 {"s=|schema=", "File path to the schema file", s => settings.JsonSchemaFileLocation = s},
                 {"o=|output=", "Directory to save files", fn => settings.OutputDirectory = fn},
-                {
-                    "v|verbose", "Print out files in console without generating",
-                    v => settings.Verbose = !string.IsNullOrWhiteSpace(v)
-                },
                 {"?|help", "Show this help message", h => settings.ShowHelp = !string.IsNullOrWhiteSpace(h)}
             };
 
@@ -95,11 +91,10 @@ namespace Cvent.SchemaToPoco
                 BracingStyle = "C"
             });
 
-            string output = stringBuilder.ToString();
-            return output;
+            return stringBuilder.ToString();
         }
 
-        private void GetUniqueJsonClasses(JsonClass jsonClass, Dictionary<string, JsonClass> uniqueClassesById, Dictionary<string, JsonClass> uniqueClassesByName)
+        private void GetUniqueJsonClasses(JsonSchemaClass jsonClass, Dictionary<string, JsonSchemaClass> uniqueClassesById, Dictionary<string, JsonSchemaClass> uniqueClassesByName)
         {
             foreach (var dependentClass in jsonClass.DependentClasses)
             {

@@ -71,20 +71,21 @@
   <ItemGroup>
     <Compile Include="CommandLineSettings.cs" />
     <Compile Include="ExitCodes.cs" />
-    <Compile Include="Json\Class\JsonClass.cs" />
-    <Compile Include="Json\Class\JsonClassBuilder.cs" />
-    <Compile Include="Json\Class\Property\JsonProperty.cs" />
-    <Compile Include="Json\Class\Property\JsonPropertyBuilder.cs" />
-    <Compile Include="Json\Class\Property\JsonPropertyTypeFactory.cs" />
-    <Compile Include="Json\Class\Property\IJsonPropertyType.cs" />
-    <Compile Include="Json\Class\Property\Type\AnyPropertyType.cs" />
-    <Compile Include="Json\Class\Property\Type\ArrayPropertyType.cs" />
-    <Compile Include="Json\Class\Property\Type\BooleanPropertyType.cs" />
-    <Compile Include="Json\Class\Property\Type\EnumPropertyType.cs" />
-    <Compile Include="Json\Class\Property\Type\IntegerPropertyType.cs" />
-    <Compile Include="Json\Class\Property\Type\ObjectPropertyType.cs" />
-    <Compile Include="Json\Class\Property\Type\StringPropertyType.cs" />
-    <Compile Include="Json\Schema\JsonSchemaExtensions.cs" />
+    <Compile Include="Json\Class\JsonSchemaClass.cs" />
+    <Compile Include="Json\Class\JsonSchemaClassBuilder.cs" />
+    <Compile Include="Json\Class\Property\JsonSchemaProperty.cs" />
+    <Compile Include="Json\Class\Property\JsonSchemaPropertyBuilder.cs" />
+    <Compile Include="Json\Class\Property\JsonSchemaPropertyTypeFactory.cs" />
+    <Compile Include="Json\Class\Property\Types\JsonSchemaPropertyType.cs" />
+    <Compile Include="Json\Class\Property\Types\AnyPropertyType.cs" />
+    <Compile Include="Json\Class\Property\Types\ArrayPropertyType.cs" />
+    <Compile Include="Json\Class\Property\Types\BooleanPropertyType.cs" />
+    <Compile Include="Json\Class\Property\Types\EnumPropertyType.cs" />
+    <Compile Include="Json\Class\Property\Types\IntegerPropertyType.cs" />
+    <Compile Include="Json\Class\Property\Types\NumberPropertyType.cs" />
+    <Compile Include="Json\Class\Property\Types\ObjectPropertyType.cs" />
+    <Compile Include="Json\Class\Property\Types\StringPropertyType.cs" />
+    <Compile Include="Json\Schema\JsonSchemaParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

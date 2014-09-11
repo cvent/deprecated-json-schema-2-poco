@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		..\readme.md = ..\readme.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cvent.SchemaToPoco", "Cvent.SchemaToPoco.Console\Cvent.SchemaToPoco.csproj", "{3AEFFCC7-E21D-4699-B40E-09CB2965F328}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cvent.SchemaToPoco", "Cvent.SchemaToPoco\Cvent.SchemaToPoco.csproj", "{3AEFFCC7-E21D-4699-B40E-09CB2965F328}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9D427228-226A-4B26-BD09-87AE6B337A2C}"
 	ProjectSection(SolutionItems) = preProject

@@ -34,7 +34,11 @@ namespace Cvent.SchemaToPoco.Json.Class.Property.Types
         /// <see cref="JsonSchemaPropertyType"/>
         public override CodeTypeReference GetType(JsonPropertyInfo info)
         {
-            return new CodeTypeReference(info.Name + "Enum");
+            var required = info.Definition.Required.HasValue && info.Definition.Required.Value;
+            var defaultPresent = GetDefaultAssignment(info) != null;
+            return required || defaultPresent
+                ? new CodeTypeReference(info.Name + "Enum")
+                : new CodeTypeReference(info.Name + "Enum?");
         }
 
         /// <see cref="JsonSchemaPropertyType"/>

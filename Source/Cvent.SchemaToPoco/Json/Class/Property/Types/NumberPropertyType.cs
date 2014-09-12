@@ -12,7 +12,11 @@ namespace Cvent.SchemaToPoco.Json.Class.Property.Types
         /// <see cref="JsonSchemaPropertyType"/>
         public override CodeTypeReference GetType(JsonPropertyInfo info)
         {
-            return new CodeTypeReference(typeof(double));
+            var required = info.Definition.Required.HasValue && info.Definition.Required.Value;
+            var defaultPresent = GetDefaultAssignment(info) != null;
+            return required || defaultPresent
+                ? new CodeTypeReference(typeof(double))
+                : new CodeTypeReference(typeof(double?));
         }
 
         /// <see cref="JsonSchemaPropertyType"/>

@@ -30,6 +30,7 @@ namespace Cvent.SchemaToPoco
         {
             var settings = ParseCommandLineParameters(args);
             var schema = JsonSchemaParser.Parse(new Uri(settings.JsonSchemaFileLocation));
+            var text = schema.ToString();
             var jsonClass = JsonSchemaClass.CreateFromSchema(schema, settings.Namespace);
             var uniqueClassesById = new Dictionary<string, JsonSchemaClass>();
             var uniqueClassesByName = new Dictionary<string, JsonSchemaClass>();

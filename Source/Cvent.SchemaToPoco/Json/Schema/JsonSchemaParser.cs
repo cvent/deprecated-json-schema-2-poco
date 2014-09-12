@@ -89,6 +89,20 @@ namespace Cvent.SchemaToPoco.Json.Schema
                 return;
             }
 
+            // RESOLVE EXTENDED REFERENCE SCHEMAS.
+            var extends = GetProperty(schemaContent, "extends", JTokenType.Object);
+            if(extends != null)
+            {
+                ResolveReferenceSchemas((JObject)extends, baseSchemaUri, referenceSchemaResolver);
+            }
+
+            extends = GetProperty(schemaContent, "extends", JTokenType.Array);
+            if(extends != null)
+            {
+                extends.ToList().ForEach(schema => ResolveReferenceSchemas(
+                    (JObject)schema, baseSchemaUri, referenceSchemaResolver));
+            }
+
             // RESOLVE REFERENCE SCHEMAS IN THE SCHEMA'S PROPERTIES.
             var type = GetProperty(schemaContent, "type", JTokenType.String);
             var properties = GetProperty(schemaContent, "properties", JTokenType.Object);
@@ -100,7 +114,6 @@ namespace Cvent.SchemaToPoco.Json.Schema
                 return;
             }
             
-
             // RESOLVE THE ID OF THE SCHEMA TO AN ABSOLUTE URI.
             var id = GetProperty(schemaContent, "id", JTokenType.String);
             if (id != null)
@@ -197,12 +210,12 @@ namespace Cvent.SchemaToPoco.Json.Schema
                     throw new ArgumentException(
                         string.Format(
                             "Failed to retrieve schema. Error: The uri scheme {0} for the json schema {1} is currently not supported by the application.",
-                            jsonResource.Scheme, jsonResource.ToString()));
+                            jsonResource.Scheme, jsonResource));
                 default:
                     throw new ArgumentException(
                         string.Format(
                             "Failed to retrieve schema. Error: An unknown uri scheme {0} for the json schema {1} is currently not supported by the application.",
-                            jsonResource.Scheme, jsonResource.ToString()));
+                            jsonResource.Scheme, jsonResource));
             }
 
             return JObject.Parse(schemaText);

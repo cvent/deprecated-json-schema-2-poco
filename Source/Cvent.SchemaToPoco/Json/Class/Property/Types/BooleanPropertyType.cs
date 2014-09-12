@@ -1,4 +1,5 @@
 ﻿using System.CodeDom;
+using System.Runtime.InteropServices;
 using Newtonsoft.Json.Linq;
 
 namespace Cvent.SchemaToPoco.Json.Class.Property.Types
@@ -11,7 +12,11 @@ namespace Cvent.SchemaToPoco.Json.Class.Property.Types
         /// <see cref="JsonSchemaPropertyType"/>
         public override CodeTypeReference GetType(JsonPropertyInfo info)
         {
-            return new CodeTypeReference(typeof(bool));
+            var required = info.Definition.Required.HasValue && info.Definition.Required.Value;
+            var defaultPresent = GetDefaultAssignment(info) != null;
+            return required || defaultPresent 
+                ? new CodeTypeReference(typeof (bool))
+                : new CodeTypeReference(typeof (bool?));
         }
 
         /// <see cref="JsonSchemaPropertyType"/>

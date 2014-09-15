@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Cvent.JsonSchema2Poco.Cor")]
+[assembly: AssemblyTitle("Cvent.JsonSchema2Poco.Core")]
 [assembly: AssemblyDescription("Generates C# classes from json schemas.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Cvent.JsonSchema2Poco.Cor")]
+[assembly: AssemblyProduct("Cvent.JsonSchema2Poco.Core")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

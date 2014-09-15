@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9D4272
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cvent.JsonSchema2Poco.Core", "Cvent.JsonSchema2Poco.Core\Cvent.JsonSchema2Poco.Core.csproj", "{4894F18E-D7E1-4F38-8781-6BBB1C5E2AAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cvent.JsonSchemaToPoco.Client", "Cvent.JsonSchemaToPoco.Client\Cvent.JsonSchemaToPoco.Client.csproj", "{3AEFFCC7-E21D-4699-B40E-09CB2965F328}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cvent.JsonSchema2Poco.Client", "Cvent.JsonSchema2Poco.Client\Cvent.JsonSchema2Poco.Client.csproj", "{3AEFFCC7-E21D-4699-B40E-09CB2965F328}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

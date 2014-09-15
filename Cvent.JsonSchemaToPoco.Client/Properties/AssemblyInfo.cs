@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Cvent.SchemaToPoco.Console")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Generates C# classes from json schemas.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cvent")]
 [assembly: AssemblyProduct("Cvent.SchemaToPoco.Console")]

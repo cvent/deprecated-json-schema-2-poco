@@ -79,8 +79,6 @@ namespace generated
         }
         
         // The number of people inhabiting this country
-        [Required()]
-        [MinValue(1000)]
         public virtual int Population
         {
             get
@@ -120,11 +118,6 @@ Default: `generated`
 ```
 Default: `<exe location>\generated`
 
-```
--v
-```
-Prints out generated code without generating files
-
 ## Usage (Library)
 
 [Download the latest DLL](https://github.com/cvent/json-schema-2-poco/releases), and add it to your project as a reference.
@@ -136,10 +129,6 @@ Prints out generated code without generating files
 // The location can be a web address, an absolute path, or a relative path.
 var controller = new JsonSchemaToPoco("/location/to/schema");
 int status = controller.Execute();
-
-// To get the C# code as a string:
-string code = JsonSchemaToPoco.Generate("/location/to/schema");
-```
 
 ## [Reference](https://github.com/cvent/json-schema-2-poco/wiki/Reference)
 Current version: 1.2 (Alpha)

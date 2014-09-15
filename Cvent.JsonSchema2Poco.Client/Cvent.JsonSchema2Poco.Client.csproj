@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cvent.JsonSchema2Poco</RootNamespace>
-    <AssemblyName>JsonSchema2Poco</AssemblyName>
+    <AssemblyName>Cvent.JsonSchema2Poco</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>

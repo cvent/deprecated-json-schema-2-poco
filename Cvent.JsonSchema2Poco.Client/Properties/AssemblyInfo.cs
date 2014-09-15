@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Cvent.SchemaToPoco.Console")]
+[assembly: AssemblyTitle("Cvent.JsonSchema2Poco.Client")]
 [assembly: AssemblyDescription("Generates C# classes from json schemas.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cvent")]
-[assembly: AssemblyProduct("Cvent.SchemaToPoco.Console")]
+[assembly: AssemblyProduct("Cvent.JsonSchema2Poco.Client")]
 [assembly: AssemblyCopyright("Copyright ©  2014 Cvent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

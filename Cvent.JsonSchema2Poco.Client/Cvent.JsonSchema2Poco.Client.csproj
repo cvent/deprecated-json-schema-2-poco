@@ -108,6 +108,14 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>rmdir /s /q $(SolutionDir)nuget\tools
+mkdir $(SolutionDir)nuget\tools
+copy $(TargetPath) $(SolutionDir)nuget\tools
+copy $(TargetDir)Cvent.JsonSchema2Poco.Core.dll $(SolutionDir)nuget\tools
+copy $(TargetDir)NDesk.Options.dll $(SolutionDir)nuget\tools
+copy $(TargetDir)Newtonsoft.Json.dll $(SolutionDir)nuget\tools</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

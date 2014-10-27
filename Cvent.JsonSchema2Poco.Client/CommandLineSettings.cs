@@ -44,7 +44,7 @@ namespace Cvent.JsonSchema2Poco
                     fn => settings.UseLongsForInts = fn != null
                 },
                 {
-                    "f|floats", "Indicates if doubles should be used instead of floats for numbers.",
+                    "d|double", "Indicates if doubles should be used instead of floats for numbers.",
                     fn => settings.UseDoublesForFloats = fn != null
                 },
                 {

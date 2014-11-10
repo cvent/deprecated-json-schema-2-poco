@@ -33,7 +33,7 @@ namespace Cvent.JsonSchema2Poco.Class.Property
                     return new EnumPropertyType();
                 case "integer":
                     return new IntegerPropertyType();
-                case "number":
+                case "float":
                     return new NumberPropertyType();
                 default:
                     return null;

@@ -9,6 +9,7 @@ namespace Cvent.JsonSchema2Poco.Class
     {
         #region Properties
         public string Id { get; set; }
+        public bool IsEnum { get; set; }
         public CodeNamespaceImportCollection Imports { get; set; }
         public String Namespace { get; set; }
         public CodeComment Comment { get; set; }
@@ -23,6 +24,7 @@ namespace Cvent.JsonSchema2Poco.Class
         #region Public Methods
         public JsonSchemaClass()
         {
+            IsEnum = false;
             Imports = new CodeNamespaceImportCollection();
             Fields = new List<CodeMemberField>();
             Properties = new List<CodeMemberProperty>();
@@ -46,7 +48,8 @@ namespace Cvent.JsonSchema2Poco.Class
 
             // DEFINE THE IN MEMORY CLASS REPRESENTATION OF THE SCHEMA.
             var jsonClassRepresentation = new CodeTypeDeclaration();
-            jsonClassRepresentation.IsClass = true;
+            jsonClassRepresentation.IsClass = !IsEnum;
+            jsonClassRepresentation.IsEnum = IsEnum;
             jsonClassRepresentation.IsPartial = usePartialClasses;
             jsonClassRepresentation.Name = Name;
             jsonClassRepresentation.Comments.Add(new CodeCommentStatement(Comment));

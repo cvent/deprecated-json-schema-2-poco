@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
@@ -16,6 +17,9 @@ namespace Cvent.JsonSchema2Poco.Class.Property.Types
         /// <see cref="JsonSchemaPropertyType"/>
         public override CodeTypeDeclarationCollection GetEmbeddedTypes(JsonPropertyInfo info)
         {
+            if (info.Definition.Id != null)
+                return base.GetEmbeddedTypes(info);
+
             var enumeration = new CodeTypeDeclaration(info.Name + "Enum");
             enumeration.IsEnum = true;
             if (!string.IsNullOrEmpty(info.Definition.Description))
@@ -36,9 +40,10 @@ namespace Cvent.JsonSchema2Poco.Class.Property.Types
         {
             var required = info.Definition.Required.HasValue && info.Definition.Required.Value;
             var defaultPresent = GetDefaultAssignment(info) != null;
+            var name = info.Definition.Title != null ? ConvertToPascalCase(info.Definition.Title) : info.Name;
             return required || defaultPresent
-                ? new CodeTypeReference(info.Name + "Enum")
-                : new CodeTypeReference(info.Name + "Enum?");
+                ? new CodeTypeReference(name + "Enum")
+                : new CodeTypeReference(name + "Enum?");
         }
 
         /// <see cref="JsonSchemaPropertyType"/>
@@ -47,8 +52,48 @@ namespace Cvent.JsonSchema2Poco.Class.Property.Types
             if (info.Definition.Default == null || info.Definition.Default.Type != JTokenType.String)
                 return null;
 
-            var value = string.Format("{0}.{1}", info.Name + "Enum", info.Definition.Default.Value<string>());
+            var name = info.Definition.Title != null ? ConvertToPascalCase(info.Definition.Title) : info.Name;
+            var value = string.Format("{0}.{1}", name + "Enum", info.Definition.Default.Value<string>());
             return CreateReferenceDefaultAssignment(info.FieldName, value);
+        }
+
+        private string ConvertToPascalCase(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return s;
+            }
+
+            // Capitalize all words
+            string[] arr = s.Split(null);
+
+            for (int i = 0; i < arr.Length; i++)
+            {
+                arr[i] = Capitalize(arr[i]);
+            }
+
+            // Remove whitespace
+            string ret = string.Join(null, arr);
+
+            // Make sure it begins with a letter or underscore
+            if (!Char.IsLetter(ret[0]) && ret[0] != '_')
+            {
+                ret = "_" + ret;
+            }
+
+            return ret;
+        }
+
+        public string Capitalize(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return s;
+            }
+
+            char[] arr = s.ToCharArray();
+            arr[0] = Char.ToUpper(arr[0]);
+            return new string(arr);
         }
     }
 }

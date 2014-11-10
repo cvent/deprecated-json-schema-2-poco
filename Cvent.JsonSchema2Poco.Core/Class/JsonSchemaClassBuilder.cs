@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.Linq;
 using Cvent.JsonSchema2Poco.Class.Property;
 using Newtonsoft.Json.Schema;
 
@@ -9,7 +10,7 @@ namespace Cvent.JsonSchema2Poco.Class
     {
         public JsonSchemaClass Build(JsonSchema schema, string className, string schemaNamespace)
         {
-            if (schema.Properties == null)
+            if (schema.Properties == null && (schema.Enum == null || schema.Enum.Count <= 0))
                 return null;
 
             var jsonClass = new JsonSchemaClass();
@@ -17,6 +18,22 @@ namespace Cvent.JsonSchema2Poco.Class
             jsonClass.Name = ConvertToPascalCase(schema.Title) ?? ConvertToPascalCase(className);
             jsonClass.Namespace = schemaNamespace;
             jsonClass.Comment = new CodeComment(schema.Description ?? string.Empty);
+
+            if (schema.Enum != null && schema.Enum.Count > 0)
+            {
+                jsonClass.Name = jsonClass.Name + "Enum";
+                var jsonProperty = JsonSchemaProperty.CreateProperty(jsonClass.Namespace, jsonClass.Name, schema);
+                if (jsonProperty == null)
+                {
+                    return null;
+                }
+                schema.Enum.ToList().ForEach(x => jsonClass.Fields.Add(new CodeMemberField(jsonClass.Name, x.ToString())));
+                jsonClass.IsEnum = true;
+                return jsonClass;
+            }
+
+            if (schema.Properties == null)
+                return null;
 
             foreach (var schemaProperty in schema.Properties)
             {

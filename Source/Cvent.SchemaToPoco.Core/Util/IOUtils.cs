@@ -16,8 +16,8 @@ namespace Cvent.SchemaToPoco.Core.Util
         /// <param name="ns">Namespace ie. com.cvent</param>
         public static void CreateDirectoryFromNamespace(string baseDir, string ns)
         {
-            string nsDir = ns.Replace('.', '\\');
-            Directory.CreateDirectory(baseDir + @"\" + nsDir);
+            string nsDir = ns.Replace('.', Path.DirectorySeparatorChar);
+            Directory.CreateDirectory(baseDir + Path.DirectorySeparatorChar + nsDir);
         }
 
         /// <summary>
@@ -73,9 +73,9 @@ namespace Cvent.SchemaToPoco.Core.Util
 
             if (!preserveSlashes)
             {
-                if (!baseUri.ToString().EndsWith(@"\"))
+                if (!baseUri.ToString().EndsWith(Path.DirectorySeparatorChar.ToString()))
                 {
-                    baseUri = new Uri(baseUri + @"\");
+                    baseUri = new Uri(baseUri.ToString() + Path.DirectorySeparatorChar);
                 }
             }
 
